@@ -1,0 +1,23 @@
+package repository;
+
+import model.User;
+import utils.MyList;
+
+public interface UserRepository {
+    //CRUD
+    User addUser(String email, String password); // При реализации не забыть генерировать уникальный id первым параметров!
+
+    User getUserByEmail(String email);
+
+    User getUserById(int id);
+
+    MyList<User> getAllUsers(); // Для отображения всех зарегистрированных пользователей
+
+    boolean updatePassword(String email, String newPassword);
+
+    boolean deleteUser(String email); // Только ADMIN
+
+    boolean isEmailExist(String email);
+
+
+}
