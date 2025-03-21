@@ -21,7 +21,7 @@ public interface MainService {
 
     // Методы по работе с книгами
 
-    Book createBook(String title, String author);
+    Book createBook(String title, String author, String dateYear, String bookGenre);
 
     Book getBookById(int id);
 
