@@ -31,12 +31,20 @@ public interface MainService {
 
     MyList<Book> getBorrowedBooks();
 
-    MyList<Book> getMyBooks();
+    MyList<Book> getMyBooks(User user);
 
     MyList<Book> getBooksByTitle(String title); // contains
     MyList<Book> getBooksByAuthor(String author); // contains
 
- //   boolean updateBook(Book book);
+    boolean login(String email, String password);
+    boolean logout();
+    User getActiveUser();
+
+    boolean unblockUser(String email);
+    boolean unblockUser(int userId);
+
+    boolean blockUser(String email);
+    boolean blockUser(int userId);
 
     // Взять книгу из библиотеки
     boolean userGetBook(int bookId);

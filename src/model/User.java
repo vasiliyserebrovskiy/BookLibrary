@@ -18,11 +18,11 @@ public class User {
     private final MyList<Book> myBooks; // Список книг, которые находятся у пользователя на руках
 
 
-    public User(int id, String email, String password) {
-        this.userId = id;
-        this.email = email;; // проверки корректности
-        this.password = password; // проверки
-        this.role = Role.USER; // Только Администратор сможет менять тип доступа у пользователя!
+    public User(int userId, String email, String password, Role role) {
+        this.email = email;
+        this.password = password;
+        this.userId = userId;
+        this.role = role;
         this.myBooks = new MyArrayList<>();
     }
 
