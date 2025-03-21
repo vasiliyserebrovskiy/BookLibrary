@@ -23,44 +23,67 @@ public class UserRepositoryImpl implements UserRepository {
 
     private void addStartUsers() {
         users.addAll(
-                new User(currenUserId.getAndIncrement(), "1", "1", Role.ADMIN),
-                new User(currenUserId.getAndIncrement(), "2", "2", Role.USER)
+                new User(currenUserId.getAndIncrement(), "admin@example.com", "Admin#123", Role.ADMIN),
+                new User(currenUserId.getAndIncrement(), "user1@example.com", "User1_pass!", Role.USER),
+                new User(currenUserId.getAndIncrement(), "user2@example.com", "Secure*987", Role.USER),
+                new User(currenUserId.getAndIncrement(), "user3@example.com", "TestUser@22", Role.USER),
+                new User(currenUserId.getAndIncrement(), "user4@example.com", "Pa$$w0rd99", Role.USER)
         );
     }
 
     @Override
     public User addUser(String email, String password) {
-        return null;
+        User user = new User(currenUserId.getAndIncrement(), email, password, Role.USER);
+        users.add(user);
+        return user;
     }
 
     @Override
     public User getUserByEmail(String email) {
+        for (User user : users) {
+            if (user.getEmail().equals(email)) {
+                return user;
+            }
+        }
         return null;
     }
 
     @Override
     public User getUserById(int id) {
+        for (User user : users) {
+            if (user.getUserId() == id) {
+                return user;
+            }
+        }
         return null;
     }
 
     @Override
     public boolean updatePassword(String email, String newPassword) {
-        return false;
+        User user = getUserByEmail(email);
+        user.setPassword(newPassword);
+        return true;
     }
 
     @Override
     public boolean deleteUser(String email) {
-        return false;
+        User user = getUserByEmail(email);
+        return users.remove(user);
     }
 
     @Override
     public boolean isEmailExist(String email) {
+        for (User user : users) {
+            if (user.getEmail().equalsIgnoreCase(email)) {
+                return true;
+            }
+        }
         return false;
     }
 
     @Override
     public MyList<User> getAllUsers() {
-        return null;
+        return users;
     }
 
     @Override
