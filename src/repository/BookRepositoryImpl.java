@@ -1,13 +1,30 @@
 package repository;
 
 import model.Book;
+import model.User;
+import utils.MyArrayList;
 import utils.MyList;
 
-/**
- * @author Vasilii Serebrovskii
- * @version 1.0 (20.03.2025)
- */
+import java.nio.file.DirectoryStream;
+import java.util.concurrent.atomic.AtomicInteger;
+
+
 public class BookRepositoryImpl implements BookRepository {
+
+    private final MyList<Book> books;
+    private final AtomicInteger currentBookId = new AtomicInteger(1);
+
+    public BookRepositoryImpl() {
+        this.books = new MyArrayList<>();
+        addStartBooks();
+    }
+
+    private void addStartBooks() {
+        books.addAll(
+                new Book(currentBookId.getAndIncrement(), "Войни и Мир", "Лев Николаевич Толстой", "1876", "роман") // ,
+        );
+    }
+
     @Override
     public Book addBook(String title, String author) {
         return null;
@@ -34,7 +51,7 @@ public class BookRepositoryImpl implements BookRepository {
     }
 
     @Override
-    public MyList<Book> getMyBooks() {
+    public MyList<Book> getMyBooks(User user) {
         return null;
     }
 

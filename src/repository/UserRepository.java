@@ -19,5 +19,11 @@ public interface UserRepository {
 
     boolean isEmailExist(String email);
 
+    boolean unblockUser(String email);
+    boolean unblockUser(int userId);
+
+    boolean blockUser(String email);
+    boolean blockUser(int id);
+
 
 }

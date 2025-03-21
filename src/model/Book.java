@@ -11,12 +11,14 @@ public class Book {
     private String bookGenre;
     private User readingUser; //
 
-    public Book(int id, String title, String author) {
+    public Book(int id, String title, String author, String dateYear, String bookGenre) {
         this.id = id;
         this.title = title;
         this.author = author;
+        this.dateYear = dateYear;
+        this.bookGenre = bookGenre;
+        this.readingUser = null;
     }
-
 
     public int getId() {
         return id;

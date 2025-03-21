@@ -16,7 +16,7 @@ public interface BookRepository {
 
     MyList<Book> getBorrowedBooks();
 
-    MyList<Book> getMyBooks();
+    MyList<Book> getMyBooks(User user);
 
     MyList<Book> getBooksByTitle(String title); // contains
     MyList<Book> getBooksByAuthor(String author); // contains
