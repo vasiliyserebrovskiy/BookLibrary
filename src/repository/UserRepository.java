@@ -1,5 +1,6 @@
 package repository;
 
+import model.Book;
 import model.User;
 import utils.MyList;
 
@@ -24,6 +25,5 @@ public interface UserRepository {
 
     boolean blockUser(String email);
     boolean blockUser(int id);
-
 
 }

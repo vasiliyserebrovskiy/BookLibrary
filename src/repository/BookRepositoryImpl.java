@@ -37,7 +37,7 @@ public class BookRepositoryImpl implements BookRepository {
     }
 
     @Override
-    public Book addBook(String title, String author) {
+    public Book addBook(String title, String author, String dateYear, String bookGenre) {
         return null;
     }
 
@@ -79,6 +79,12 @@ public class BookRepositoryImpl implements BookRepository {
     @Override
     public boolean updateBook(Book book) {
         return false;
+    }
+
+    @Override
+    public void userReturnBook(int id) {
+        Book book = getBookById(id);
+        book.setReadingUser(null);
     }
 
     @Override
