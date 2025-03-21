@@ -21,8 +21,19 @@ public class BookRepositoryImpl implements BookRepository {
 
     private void addStartBooks() {
         books.addAll(
-                new Book(currentBookId.getAndIncrement(), "Войни и Мир", "Лев Николаевич Толстой", "1876", "роман") // ,
-        );
+                new Book(currentBookId.getAndIncrement(), "Война и Мир", "Лев Николаевич Толстой", "1876", "роман")  ,
+                new Book(currentBookId.getAndIncrement(), "Преступление и наказание", "Федор Михайлович Достоевский", "1866", "роман"),
+                new Book(currentBookId.getAndIncrement(), "Мертвые души", "Николай Васильевич Гоголь", "1835", "поэма"),
+                new Book(currentBookId.getAndIncrement(), "Вий", "Николай Васильевич Гоголь", "1833", "повесть"),
+                new Book(currentBookId.getAndIncrement(), "Властели́н коле́ц", "Толкин, Джон Рональд Руэл", "1954", "роман"),
+                new Book(currentBookId.getAndIncrement(), "Над пропастью во ржи", "Сэлинджер, Джером Дэвид", "1951", "роман"),
+                new Book(currentBookId.getAndIncrement(), "1984", "Джордж О́руэлл ", "1949", "роман"),
+                new Book(currentBookId.getAndIncrement(), "Остров сокровищ", "Роберт Льюис Стивенсон ", "1883", "роман"),
+                new Book(currentBookId.getAndIncrement(), "Унесенные ветром", "Маргарет Митчелл ", "1936", "роман"),
+                new Book(currentBookId.getAndIncrement(), "Война миров", "Уэллс, Герберт Джордж ", "1897", "научно-фантастический роман"),
+                new Book(currentBookId.getAndIncrement(), "Роме́о и Джулье́тта", "Уи́льям Шекспи́р  ", "1594", "трагедия")
+
+                );
     }
 
     @Override
