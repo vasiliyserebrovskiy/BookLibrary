@@ -1,6 +1,9 @@
 package utils;
 
-
+/**
+ * @author Vasilii Serebrovskii
+ * @version 1.0 (18.03.2025)
+ */
 public class UserValidation {
 
     public static boolean isEmailValid(String email) {

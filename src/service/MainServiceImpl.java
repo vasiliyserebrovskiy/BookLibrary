@@ -101,8 +101,7 @@ public class MainServiceImpl implements MainService {
         if (user == null) {
             return false;
         }
-        user.setBlocked(true);
-        return true;
+        return userRepository.blockUser(email);
     }
 
     @Override
@@ -118,8 +117,7 @@ public class MainServiceImpl implements MainService {
         if (user == null) {
             return false;
         }
-        user.setBlocked(true);
-        return true;
+        return userRepository.blockUser(userId);
     }
 
     @Override
@@ -134,8 +132,7 @@ public class MainServiceImpl implements MainService {
         if (user == null) {
             return false;
         }
-        user.setBlocked(false);
-        return true;
+        return userRepository.unblockUser(email);
     }
 
     @Override
@@ -150,8 +147,7 @@ public class MainServiceImpl implements MainService {
         if (user == null) {
             return false;
         }
-        user.setBlocked(false);
-        return true;
+        return userRepository.unblockUser(userId);
     }
 
     @Override

@@ -15,14 +15,12 @@ public class User {
     private final int userId; // Для поиска пользователя по id
     //private String name;
     private Role role;
-    private boolean blocked;
 
     public User(int userId, String email, String password, Role role) {
         this.email = email;
         this.password = password;
         this.userId = userId;
         this.role = role;
-        this.blocked = false;
     }
 
     public String getEmail() {
@@ -51,14 +49,6 @@ public class User {
 
     public int getUserId() {
         return userId;
-    }
-
-    public boolean isBlocked() {
-        return blocked;
-    }
-
-    public void setBlocked(boolean blocked) {
-        this.blocked = blocked;
     }
 
     @Override

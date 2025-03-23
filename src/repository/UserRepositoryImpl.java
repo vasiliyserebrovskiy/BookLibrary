@@ -8,10 +8,6 @@ import utils.MyList;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * @author Vasilii Serebrovskii
- * @version 1.0 (20.03.2025)
- */
 public class UserRepositoryImpl implements UserRepository {
 
     private final MyList<User> users;
@@ -101,28 +97,28 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public boolean unblockUser(String email) {
         User user = getUserByEmail(email);
-        user.setBlocked(false);
+        user.setRole(Role.USER);
         return true;
     }
 
     @Override
     public boolean unblockUser(int userId) {
         User user = getUserById(userId);
-        user.setBlocked(false);
+        user.setRole(Role.USER);
         return true;
     }
 
     @Override
     public boolean blockUser(String email) {
         User user = getUserByEmail(email);
-        user.setBlocked(true);
+        user.setRole(Role.BLOCKED);
         return true;
     }
 
     @Override
     public boolean blockUser(int id) {
         User user = getUserById(id);
-        user.setBlocked(true);
+        user.setRole(Role.BLOCKED);
         return true;
     }
 }
