@@ -4,6 +4,7 @@ import model.Book;
 import model.User;
 import repository.BookRepository;
 import repository.UserRepository;
+import utils.MyArrayList;
 import utils.MyList;
 
 
@@ -50,37 +51,50 @@ public class MainServiceImpl implements MainService {
     }
 
     @Override
-    public Book createBook(String title, String author) {
-        return null;
+    public Book createBook(String title, String author, String dateYear, String bookGenre) {
+        if (title.isEmpty() && author.isEmpty() && dateYear.isEmpty() && bookGenre.isEmpty()) {
+            return null;
+        } else {
+            return bookRepository.addBook(title, author, dateYear, bookGenre);
+        }
     }
 
     @Override
     public Book getBookById(int id) {
+        if (id > 0) {
+            return bookRepository.getBookById(id);
+        }
         return null;
     }
 
     @Override
     public MyList<Book> getAllBooks() {
-        return null;
+        return bookRepository.getAllBooks();
     }
 
     @Override
     public MyList<Book> getAvailableBooks() {
-        return null;
+        return bookRepository.getAvailableBooks();
     }
 
     @Override
     public MyList<Book> getBorrowedBooks() {
-        return null;
+        return bookRepository.getBorrowedBooks();
     }
 
     @Override
     public MyList<Book> getBooksByTitle(String title) {
+        if (!title.isEmpty()) {
+            return bookRepository.getBooksByTitle(title);
+        }
         return null;
     }
 
     @Override
     public MyList<Book> getBooksByAuthor(String author) {
+        if (!author.isEmpty()) {
+            return bookRepository.getBooksByAuthor(author);
+        }
         return null;
     }
 
@@ -101,22 +115,34 @@ public class MainServiceImpl implements MainService {
 
     @Override
     public boolean userGetBook(int bookId) {
+
         return false;
     }
 
     @Override
     public boolean userReturnBook(int bookId) {
+        if (bookId > 0) {
+            Book book = bookRepository.getBookById(bookId);
+            if (book != null) {
+                bookRepository.userReturnBook(bookId);
+                return true;
+            }
+            return false;
+        }
         return false;
     }
 
     @Override
     public boolean deleteBookById(int id) {
+        if (id > 0) {
+            return bookRepository.deleteBookById(id);
+        }
         return false;
     }
 
     @Override
     public MyList<Book> getMyBooks(User user) {
-        return null;
+        return bookRepository.getMyBooks(user);
     }
 
     @Override

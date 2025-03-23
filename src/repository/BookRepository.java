@@ -6,7 +6,7 @@ import utils.MyList;
 
 public interface BookRepository {
 
-    Book addBook(String title, String author);
+    Book addBook(String title, String author, String dateYear, String bookGenre);
 
     Book getBookById(int id);
 
@@ -22,6 +22,10 @@ public interface BookRepository {
     MyList<Book> getBooksByAuthor(String author); // contains
 
     boolean updateBook(Book book);
+
+//    boolean isBook(int id);
+
+    void userReturnBook(int id);
 
     boolean deleteBookById(int id);
 
