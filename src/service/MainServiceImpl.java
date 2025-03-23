@@ -1,11 +1,13 @@
 package service;
 
 import model.Book;
+import model.Role;
 import model.User;
 import repository.BookRepository;
 import repository.UserRepository;
 import utils.MyArrayList;
 import utils.MyList;
+import utils.UserValidation;
 
 
 public class MainServiceImpl implements MainService {
@@ -20,35 +22,175 @@ public class MainServiceImpl implements MainService {
         this.activeUser = null;
     }
 
+    // Users
+
     @Override
     public User createUser(String email, String password) {
-        return null;
+        // проверяем валидность эмеил
+        if (!UserValidation.isEmailValid(email)) {
+            return null;
+        }
+        // проверяем существует ли пользователь с таким эмеил
+        if (userRepository.isEmailExist(email)) {
+            return null;
+        }
+        // проверяем валидность пароля
+        if (!UserValidation.isPasswordValid(password)) {
+            return null;
+        }
+        // создаем юзера
+        return userRepository.addUser(email,password);
     }
 
     @Override
     public User getUserByEmail(String email) {
-        return null;
+        return userRepository.getUserByEmail(email);
     }
 
     @Override
     public User getUserById(int id) {
-        return null;
+        return userRepository.getUserById(id);
     }
 
     @Override
     public MyList<User> getAllUsers() {
-        return null;
+        return userRepository.getAllUsers();
     }
 
     @Override
     public boolean updatePassword(String email, String newPassword) {
-        return false;
+        // есть ли пользователь
+        User user = userRepository.getUserByEmail(email);
+        if (user == null) {
+            return false;
+        }
+        // валидность пароля
+        if (!UserValidation.isPasswordValid(newPassword)) {
+            return false;
+        }
+        return userRepository.updatePassword(email, newPassword);
     }
 
     @Override
     public boolean deleteUser(String email) {
+        // проверка на Админа
+        if (activeUser.getRole() != Role.ADMIN) {
+            return false;
+        }
+        // проверю валидность
+        if (!UserValidation.isEmailValid(email)) {
+            return false;
+        }
+        // проверка в репозитории
+        User user = userRepository.getUserByEmail(email);
+        if (user == null) {
+            return false;
+        }
+        return userRepository.deleteUser(email);
+    }
+
+    @Override
+    public boolean blockUser(String email) {
+        if (activeUser.getRole() != Role.ADMIN) {
+            return false;
+        }
+        if (!UserValidation.isEmailValid(email)) {
+            return false;
+        }
+        User user = userRepository.getUserByEmail(email);
+        if (user == null) {
+            return false;
+        }
+        user.setBlocked(true);
+        return true;
+    }
+
+    @Override
+    public boolean blockUser(int userId) {
+        if (activeUser.getRole() != Role.ADMIN) {
+            return false;
+        }
+        if (userId <= 0) {
+            return false;
+        }
+
+        User user = userRepository.getUserById(userId);
+        if (user == null) {
+            return false;
+        }
+        user.setBlocked(true);
+        return true;
+    }
+
+    @Override
+    public boolean unblockUser(String email) {
+        if (activeUser.getRole() != Role.ADMIN) {
+            return false;
+        }
+        if (!UserValidation.isEmailValid(email)) {
+            return false;
+        }
+        User user = userRepository.getUserByEmail(email);
+        if (user == null) {
+            return false;
+        }
+        user.setBlocked(false);
+        return true;
+    }
+
+    @Override
+    public boolean unblockUser(int userId) {
+        if (activeUser.getRole() != Role.ADMIN) {
+            return false;
+        }
+        if (userId <= 0) {
+            return false;
+        }
+        User user = userRepository.getUserById(userId);
+        if (user == null) {
+            return false;
+        }
+        user.setBlocked(false);
+        return true;
+    }
+
+    @Override
+    public User getActiveUser() {
+        return activeUser;
+    }
+
+    @Override
+    public boolean login(String email, String password) {
+        // валидность почты и пароля
+        if (!UserValidation.isEmailValid(email) || !UserValidation.isPasswordValid(password)) {
+            return false;
+        }
+        // получаем пользователя
+        User user = userRepository.getUserByEmail(email);
+        if (user == null) {
+            return false;
+        }
+        // сверяем пароль с репозиторием
+        if (user.getPassword().equals(password)) {
+            // делаем пользователя активным
+            activeUser = user;
+            return true;
+        }
         return false;
     }
+
+    @Override
+    public boolean logout() {
+        if (activeUser == null) {
+            return false; // нет активного пользователя
+        }
+        activeUser = null;
+        return true; //  выход
+    }
+
+
+
+    // Books
 
     @Override
     public Book createBook(String title, String author, String dateYear, String bookGenre) {
@@ -99,21 +241,6 @@ public class MainServiceImpl implements MainService {
     }
 
     @Override
-    public boolean login(String email, String password) {
-        return false;
-    }
-
-    @Override
-    public boolean logout() {
-        return false;
-    }
-
-    @Override
-    public User getActiveUser() {
-        return null;
-    }
-
-    @Override
     public boolean userGetBook(int bookId) {
 
         return false;
@@ -145,23 +272,4 @@ public class MainServiceImpl implements MainService {
         return bookRepository.getMyBooks(user);
     }
 
-    @Override
-    public boolean unblockUser(String email) {
-        return false;
-    }
-
-    @Override
-    public boolean unblockUser(int userId) {
-        return false;
-    }
-
-    @Override
-    public boolean blockUser(String email) {
-        return false;
-    }
-
-    @Override
-    public boolean blockUser(int userId) {
-        return false;
-    }
 }

@@ -42,7 +42,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public User getUserByEmail(String email) {
         for (User user : users) {
-            if (user.getEmail().equals(email)) {
+            if (user.getEmail().equalsIgnoreCase(email)) {
                 return user;
             }
         }
@@ -53,6 +53,17 @@ public class UserRepositoryImpl implements UserRepository {
     public User getUserById(int id) {
         for (User user : users) {
             if (user.getUserId() == id) {
+                return user;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public User login(String email, String password) {
+        for (User user : users) {
+            if (user.getEmail().equalsIgnoreCase(email)
+                    && user.getPassword().equals(password)) {
                 return user;
             }
         }
@@ -89,21 +100,29 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public boolean unblockUser(String email) {
-        return false;
+        User user = getUserByEmail(email);
+        user.setBlocked(false);
+        return true;
     }
 
     @Override
     public boolean unblockUser(int userId) {
-        return false;
+        User user = getUserById(userId);
+        user.setBlocked(false);
+        return true;
     }
 
     @Override
     public boolean blockUser(String email) {
-        return false;
+        User user = getUserByEmail(email);
+        user.setBlocked(true);
+        return true;
     }
 
     @Override
     public boolean blockUser(int id) {
-        return false;
+        User user = getUserById(id);
+        user.setBlocked(true);
+        return true;
     }
 }
