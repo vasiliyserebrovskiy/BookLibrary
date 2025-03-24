@@ -12,6 +12,8 @@ public interface UserRepository {
 
     User getUserById(int id);
 
+    User login(String email, String password);
+
     MyList<User> getAllUsers(); // Для отображения всех зарегистрированных пользователей
 
     boolean updatePassword(String email, String newPassword);
