@@ -77,18 +77,55 @@ public class BookRepositoryImpl implements BookRepository {
     }
 
     @Override
-    public boolean updateBook(Book book) {
+    public Book userGetBook(int id, User user) {
+        return null;
+    }
+
+    @Override
+    public boolean isBookExist(int id) {
+        for (Book book : books) {
+            if (book.getId() == id) {
+                return true;
+            }
+        }
         return false;
     }
 
     @Override
-    public void userReturnBook(int id) {
+    public Book userReturnBook(int id) {
         Book book = getBookById(id);
         book.setReadingUser(null);
+        return book;
     }
 
     @Override
     public boolean deleteBookById(int id) {
         return false;
+    }
+
+    @Override
+    public Book updateTitle(int id, String title) {
+        Book book = getBookById(id);
+        book.setTitle(title);
+        return book;
+    }
+
+    @Override
+    public Book updateAuthor(int id, String author) {
+        Book book = getBookById(id);
+        book.setAuthor(author);
+        return book;
+    }
+
+    @Override
+    public Book updateDateYear(int id, String dateYear) {
+        Book book = getBookById(id);
+        book.setDateYear(dateYear);
+        return book;
+    }
+
+    @Override
+    public Book updateGenre(int id, String bookGenre) {
+        return null;
     }
 }

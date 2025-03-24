@@ -58,17 +58,12 @@ public class MainServiceImpl implements MainService {
     }
 
     @Override
-    public boolean updatePassword(String email, String newPassword) {
-        // есть ли пользователь
-        User user = userRepository.getUserByEmail(email);
-        if (user == null) {
-            return false;
-        }
+    public User updatePassword(String newPassword) {
         // валидность пароля
         if (!UserValidation.isPasswordValid(newPassword)) {
-            return false;
+            return null;
         }
-        return userRepository.updatePassword(email, newPassword);
+        return userRepository.updatePassword(activeUser.getEmail(), newPassword);
     }
 
     @Override
@@ -136,16 +131,16 @@ public class MainServiceImpl implements MainService {
     }
 
     @Override
-    public boolean unblockUser(int userId) {
+    public User unblockUser(int userId) {
         if (activeUser.getRole() != Role.ADMIN) {
-            return false;
+            return null;
         }
         if (userId <= 0) {
-            return false;
+            return null;
         }
         User user = userRepository.getUserById(userId);
         if (user == null) {
-            return false;
+            return null;
         }
         return userRepository.unblockUser(userId);
     }
@@ -237,22 +232,22 @@ public class MainServiceImpl implements MainService {
     }
 
     @Override
-    public boolean userGetBook(int bookId) {
+    public Book userGetBook(int bookId) {
 
-        return false;
+        return null;
     }
 
     @Override
-    public boolean userReturnBook(int bookId) {
+    public Book userReturnBook(int bookId) {
         if (bookId > 0) {
             Book book = bookRepository.getBookById(bookId);
             if (book != null) {
-                bookRepository.userReturnBook(bookId);
-                return true;
+                Book book2 = bookRepository.userReturnBook(bookId);
+                return book2;
             }
-            return false;
+            return null;
         }
-        return false;
+        return null;
     }
 
     @Override
@@ -264,8 +259,69 @@ public class MainServiceImpl implements MainService {
     }
 
     @Override
-    public MyList<Book> getMyBooks(User user) {
-        return bookRepository.getMyBooks(user);
+    public MyList<Book> getMyBooks() {
+        return bookRepository.getMyBooks(activeUser);
     }
 
+    @Override
+    public User giveUserAdminRole(int id) {
+        return null;
+    }
+
+    @Override
+    public Book updateTitle(int id, String title) {
+        if (id > 0 && !title.isEmpty()) {
+            if (bookRepository.isBookExist(id)) {
+                //проверяем что книга не на руках
+                Book book = getBookById(id);
+                if (book.getReadingUser() == null) {
+                    return bookRepository.updateTitle(id, title);
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Book updateAuthor(int id, String author) {
+        if (id > 0 && !author.isEmpty()) {
+            if (bookRepository.isBookExist(id)) {
+                //проверяем что книга не на руках
+                Book book = getBookById(id);
+                if (book.getReadingUser() == null) {
+                    return bookRepository.updateAuthor(id, author);
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Book updateDateYear(int id, String dateYear) {
+        if (id > 0 && !dateYear.isEmpty()) {
+            if (bookRepository.isBookExist(id)) {
+                //проверяем что книга не на руках
+                Book book = getBookById(id);
+                if (book.getReadingUser() == null) {
+                    return bookRepository.updateDateYear(id, dateYear);
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Book updateGenre(int id, String bookGenre) {
+        if (id >0) {
+            if(bookRepository.isBookExist(id)) {
+                return bookRepository.getBookById(id);
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Book whoReadBook(int id) {
+        return null;
+    }
 }

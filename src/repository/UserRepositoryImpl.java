@@ -20,8 +20,8 @@ public class UserRepositoryImpl implements UserRepository {
 
     private void addStartUsers() {
         users.addAll(
-                new User(currenUserId.getAndIncrement(), "admin@example.com", "Admin#123", Role.ADMIN),
-                new User(currenUserId.getAndIncrement(), "user1@example.com", "User1_pass!", Role.USER),
+                new User(currenUserId.getAndIncrement(), "1", "1", Role.ADMIN),
+                new User(currenUserId.getAndIncrement(), "2", "2", Role.USER),
                 new User(currenUserId.getAndIncrement(), "user2@example.com", "Secure*987", Role.USER),
                 new User(currenUserId.getAndIncrement(), "user3@example.com", "TestUser@22", Role.USER),
                 new User(currenUserId.getAndIncrement(), "user4@example.com", "Pa$$w0rd99", Role.USER)
@@ -67,10 +67,10 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public boolean updatePassword(String email, String newPassword) {
+    public User updatePassword(String email, String newPassword) {
         User user = getUserByEmail(email);
         user.setPassword(newPassword);
-        return true;
+        return user;
     }
 
     @Override
@@ -102,10 +102,10 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public boolean unblockUser(int userId) {
+    public User unblockUser(int userId) {
         User user = getUserById(userId);
         user.setRole(Role.USER);
-        return true;
+        return user;
     }
 
     @Override
@@ -120,5 +120,10 @@ public class UserRepositoryImpl implements UserRepository {
         User user = getUserById(id);
         user.setRole(Role.BLOCKED);
         return true;
+    }
+
+    @Override
+    public User giveUserAdminRole(int id) {
+        return null;
     }
 }
