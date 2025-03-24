@@ -151,9 +151,21 @@ public class MainServiceImpl implements MainService {
     }
 
     @Override
+    public User giveUserAdminRole(int id) {
+        if (activeUser == null || activeUser.getRole() != Role.ADMIN) {
+            return null;
+        }
+        User user = userRepository.getUserById(id);
+        if (user.getRole() == Role.ADMIN) {
+            return null;
+        }
+        return userRepository.giveUserAdminRole(id);
+    }
+
+    @Override
     public boolean login(String email, String password) {
         // валидность почты и пароля
-        if (!UserValidation.isEmailValid(email) || !UserValidation.isPasswordValid(password)) {
+        if (email == null || email.isEmpty() || password == null || password.isEmpty()) {
             return false;
         }
         // получаем пользователя
@@ -263,10 +275,6 @@ public class MainServiceImpl implements MainService {
         return bookRepository.getMyBooks(activeUser);
     }
 
-    @Override
-    public User giveUserAdminRole(int id) {
-        return null;
-    }
 
     @Override
     public Book updateTitle(int id, String title) {
