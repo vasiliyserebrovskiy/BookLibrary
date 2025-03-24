@@ -4,14 +4,18 @@ import model.Role;
 import model.User;
 import service.MainService;
 import utils.MyList;
-
-import java.awt.print.Book;
+import model.Book;
 import java.util.Scanner;
 
 public class Menu {
 
     private final MainService service;
     private Scanner scanner = new Scanner(System.in);
+    //for warning and error printing
+    public static final String COLOR_RED = "\u001B[31m";
+    public static final String COLOR_YELLOW = "\u001B[33m";
+    public static final String COLOR_RESET = "\u001B[0m";
+    public static final String COLOR_GREEN = "\u001B[32m";
 
     public Menu(MainService service) {
         this.service = service;
@@ -24,59 +28,63 @@ public class Menu {
     private void showMainMenu() {
         while (true) {
 
-            System.out.println("Добро пожаловать в библиотеку \"Знание Века\"");
+            System.out.println("\nДобро пожаловать в библиотеку \"Знание Века\"");
             System.out.println("1 Меню книги");
             System.out.println("2 Меню пользователя");
             System.out.println("3 Меню администратора");
             System.out.println("0 Выход");
+            System.out.println("\nВыберите номер пункта меню");
 
-            int choice = scanner.nextInt();
-            scanner.nextLine();
+            String input = scanner.nextLine();
 
-            if (choice == 0) {
-                System.out.println("До свидания!");
-                // Завершение работы приложения
-                System.exit(0);
+            if (isInteger(input)) {
+                int choice = Integer.parseInt(input);
+
+                if (choice == 0) {
+                    printOkMessage("\nДо свидания!");
+                    // Завершение работы приложения
+                    System.exit(0);
+                }
+
+                showSubMenu(choice);
+            } else {
+                printErrorMessage("\nВы ввели не число!");
+                waitRead();
             }
-
-            showSubMenu(choice);
-
         }
     }
 
     private void showSubMenu(int choice) {
         switch (choice) {
             case 1:
-                //TODO: show book menu
                 showBookMenu();
                 break;
             case 2:
-                //TODO show user menu
                 showUserMenu();
                 break;
             case 3:
-                //TODO show admin menu
                 showAdminMenu();
                 break;
             default:
-                System.out.println("Сделайте корректный выбор");
+                printWarningMessage("\nСделайте корректный выбор");
                 waitRead();
         }
     }
 
     // Меню книг
     private void showBookMenu() {
-        while(true) {
+        while (true) {
 
             if (service.getActiveUser() == null) {
-                System.out.println("Меню книг:");
+                System.out.println("\nМеню книг:");
                 System.out.println("1 Список всех книг");
                 System.out.println("2 Поиск книги по названию");
                 System.out.println("3 Поиск книги по автору");
                 System.out.println("0 Выход в предыдущее меню");
+                System.out.println("\nВыберите номер пункта меню");
 
             } else {
-                System.out.println("Меню книг:");
+                System.out.println("\nМеню книг:");
                 System.out.println("1 Список всех книг");
                 System.out.println("2 Поиск книги по названию");
                 System.out.println("3 Поиск книги по автору");
@@ -87,92 +95,290 @@ public class Menu {
                 System.out.println("8 Вернуть книгу");
                 System.out.println("9 Кто читает книгу");
                 System.out.println("0 Выйти в предыдущее меню");
-                System.out.println("\n Выберите номер пункта меню");
+                System.out.println("\nВыберите номер пункта меню");
             }
 
-            int input = scanner.nextInt();
-            scanner.nextLine();
+            String input = scanner.nextLine();
 
-            if (input == 0) break;
+            if (isInteger(input)) {
+                int choice = Integer.parseInt(input);
 
-            handleBookMenuInput(input);
+                if (choice == 0) break;
+
+                //Проверка ввода если пользователь не авторизован
+                if (service.getActiveUser() == null && choice > 3) {
+                    printWarningMessage("\nСделайте корректный выбор");
+                    waitRead();
+                    continue;
+                }
+
+                handleBookMenuInput(choice);
+
+            } else {
+                printErrorMessage("\nВы ввели не число!");
+                waitRead();
+            }
+
         }
     }
 
     private void handleBookMenuInput(int input) {
-         switch(input) {
-             case 1:
-                 //TODO Список всех книг
-                 break;
-             case 2:
-                 //TODO Поиск книг по названию
-                 break;
-             case 3:
-                 //TODO поиск книги по автору
-                 break;
-             case 4:
-                 //TODO Список всех свободных книг
-                 break;
-             case 5:
-                 //TODO список всех взятых книг
-                 break;
-             case 6:
-                 //TODO Списко моих книг
-                 break;
-             case 7:
-                 //TODO Взять книгу
-                 break;
-             case 8:
-                 //TODO вернуть книгу
-                 break;
-             case 9:
-                 //TODO кто читает книгу
-                 break;
+        MyList<Book> books;
+        String bookStrId;
 
+        switch (input) {
+            case 1:
+                books = service.getAllBooks();
+                showBooksList(books);
+                waitRead();
+                break;
+            case 2:
+                System.out.println("Введите название книги:");
+                String bookTitle = scanner.nextLine();
+                books = service.getBooksByTitle(bookTitle);
+                if (books.size() == 0) {
+                    printWarningMessage("\nКниг с таким названием в нашей библиотеке не найдено.");
+                    waitRead();
+                } else {
+                    showBooksList(books);
+                    waitRead();
+                }
+                break;
+            case 3:
+                System.out.println("Введите автора книги:");
+                String bookAuthor = scanner.nextLine();
+                books = service.getBooksByAuthor(bookAuthor);
+                if (books.size() == 0) {
+                    printWarningMessage("\nКниг этого автора в нашей библиотеке не найдено.");
+                    waitRead();
+                } else {
+                    showBooksList(books);
+                    waitRead();
+                }
+                break;
+            case 4:
+                books = service.getAvailableBooks();
+                if (books.size() == 0) {
+                    printWarningMessage("\nСвободных книг в нашей библиотеке на данный момент нет.");
+                    waitRead();
+                } else {
+                    showBooksList(books);
+                    waitRead();
+                }
+                break;
+            case 5:
+                books = service.getBorrowedBooks();
+                if (books.size() == 0) {
+                    printWarningMessage("\nВсе книги в нашей библиотеке на данный момент доступны.");
+                    waitRead();
+                } else {
+                    showBooksList(books);
+                    waitRead();
+                }
+                break;
+            case 6:
+                books = service.getMyBooks();
+                if (books.size() == 0) {
+                    printWarningMessage("\nУ вас нет книг на руках.");
+                    waitRead();
+                } else {
+                    showBooksList(books);
+                    waitRead();
+                }
+                break;
+            case 7:
+                System.out.println("Введите id книги, которую Вы хотите взять:");
+                bookStrId = scanner.nextLine();
+
+                if (isInteger(bookStrId)) {
+                    int bookIntId = Integer.parseInt(bookStrId);
+                    Book book = service.userGetBook(bookIntId);
+                    if (book == null) {
+                        printWarningMessage("\nНе удалось взять книгу с id:" + bookStrId);
+                        printWarningMessage("Книги с таким id нет или ее уже кто-то читает.");
+                        waitRead();
+                    } else {
+                        System.out.println("\nВы успешно взяли книгу: " + book);
+                        waitRead();
+                    }
+                } else {
+                    printErrorMessage("\nВы ввели не корректный id книги");
+                    waitRead();
+                }
+                break;
+            case 8:
+                System.out.println("Введите id книги, которую Вы хотите вернуть:");
+                bookStrId = scanner.nextLine();
+
+                if (isInteger(bookStrId)) {
+                    int bookIntId = Integer.parseInt(bookStrId);
+                    Book book = service.userReturnBook(bookIntId);
+                    if (book == null) {
+                        printWarningMessage("\nНе удалось вернуть книгу с id:" + bookStrId);
+                        printWarningMessage("Книги с таким id нет или Вы ее не читаете.");
+                        waitRead();
+                    } else {
+                        System.out.println("\nВы успешно вернули книгу: " + book);
+                        waitRead();
+                    }
+                } else {
+                    printErrorMessage("\nВы ввели не корректный id книги.");
+                    waitRead();
+                }
+                break;
+            case 9:
+                System.out.println("Чтобы узнать кто читает книгу, введите id книги:");
+                bookStrId = scanner.nextLine();
+
+                if (isInteger(bookStrId)) {
+                    int bookIntId = Integer.parseInt(bookStrId);
+                    Book book = service.whoReadBook(bookIntId);
+                    if (book == null) {
+                        printWarningMessage("\nНе найдено книги с id:" + bookIntId);
+                        waitRead();
+                    } else {
+                        printOkMessage("Книгу с id:" + book.getId() + " читает " + book.getReadingUser());
+                        waitRead();
+                    }
+                } else {
+                    printErrorMessage("\nВы ввели не корректный id книги.");
+                    waitRead();
+                }
+                break;
+            default:
+                printWarningMessage("\nСделайте корректный выбор");
+                waitRead();
         }
     }
 
-    //Меную пользователя
+    //Меню пользователя
     private void showUserMenu() {
-        while(true) {
+        while (true) {
 
             if (service.getActiveUser() == null) {
-                System.out.println("Меню пользователя:");
+                System.out.println("\nМеню пользователя:");
                 System.out.println("1 Вход в систему");
                 System.out.println("2 Зарегистрироваться");
                 System.out.println("0 Выйти в предыдущее меню");
+                System.out.println("\n Выберите номер пункта меню");
             } else {
-                System.out.println("Меню пользователя:");
+                System.out.println("\nМеню пользователя:");
                 System.out.println("1 Вход в систему");
                 System.out.println("2 Зарегистрироваться");
                 System.out.println("3 Изменить пароль");
                 System.out.println("4 Выйти");
                 System.out.println("0 Выйти в предыдущее меню");
+                System.out.println("\n Выберите номер пункта меню");
             }
 
-            int input = scanner.nextInt();
-            scanner.nextLine();
+            String input = scanner.nextLine();
 
-            if (input == 0) break;
+            if (isInteger(input)) {
+                int choice = Integer.parseInt(input);
 
-            handleUserMenuInput(input);
+                if (choice == 0) break;
+
+                //Проверка ввода если пользователь не авторизован
+                if (service.getActiveUser() == null && choice > 2) {
+                    printWarningMessage("\nСделайте корректный выбор");
+                    waitRead();
+                    continue;
+                }
+
+                handleUserMenuInput(choice);
+            } else {
+                printErrorMessage("\nВы ввели не число!");
+                waitRead();
+            }
+
         }
     }
 
     private void handleUserMenuInput(int input) {
         switch (input) {
             case 1:
-                //TODO Вход в систему
+                if (service.getActiveUser() == null) {
+                    System.out.println("Введине ваш email:");
+                    String email = scanner.nextLine();
+                    System.out.println("Введите ваш пароль:");
+                    String password = scanner.nextLine();
+                    boolean isLogin = service.login(email, password);
+
+                    if (isLogin) {
+                        printOkMessage("\nВы успешно вошли в систему.");
+                        waitRead();
+                    } else {
+                        printErrorMessage("\nНе удалось войти в систему.");
+                        printWarningMessage("Вы не зарегистрированы в системе или");
+                        printWarningMessage("Вы ввели неверный email или пароль.");
+                        waitRead();
+                    }
+                } else {
+                    printWarningMessage("Вы уже вошли в систему");
+                    waitRead();
+                }
                 break;
+
             case 2:
-                //TODO Зарегистрироваться
+                if (service.getActiveUser() != null) {
+                    printWarningMessage("\nВы уже зарегистрированы и вошли в систему.");
+                    waitRead();
+                } else {
+                    System.out.println("Пожалуйста введите ваш email:");
+                    String email = scanner.nextLine();
+                    System.out.println("Введите ваш пароль:");
+                    String password = scanner.nextLine();
+                    User user = service.createUser(email, password);
+                    if (user == null) {
+                        printErrorMessage("\nК сожалению, попытка Вышей регистрации не удалась.");
+                        printErrorMessage("Пользователь с таким E-mail уже зарегистрирован или");
+                        printErrorMessage("указанный Вами логин или пароль не соответствуют требованиям нашей системы!");
+                        printErrorMessage("---------- Наши требования для e-mail и пароля ----------");
+                        printOkMessage("E-mail должен быть указан в формате: myname@gmail.com");
+                        printOkMessage("Пароль должен удовлетворять следующим критериям:");
+                        printOkMessage("1 должен содержать не менее 8 символов");
+                        printOkMessage("2 должен содержать минимум одну маленькую букву");
+                        printOkMessage("3 должен содержать минимум одну большую букву");
+                        printOkMessage("4 должен содержать хотя бы одну цифру");
+                        printOkMessage("5 должен содержать хотя бы один спец символ из перечисленных: \"!#%$@&*()[],.-\"");
+                        printOkMessage("Пожалуйста, повторите попытку регистрации.");
+                        waitRead();
+                    } else {
+                        printOkMessage("\nПоздравляем, Вы успешно зарегистрировались в нашей библиотеке.");
+                        waitRead();
+                    }
+                }
                 break;
             case 3:
-                //TODO изменить пароль
+                System.out.println("\nПожалуйста введите новый пароль:");
+                String password = scanner.nextLine();
+                User user = service.updatePassword(password);
+                if (user == null) {
+                    printErrorMessage("К сожалению, указанный вами пароль не соответствует требованиям нашей системы!");
+                    printErrorMessage("---------- Наши требования паролю ----------");
+                    printOkMessage("Пароль должен удовлетворять следующим критериям:");
+                    printOkMessage("1 должен содержать не менее 8 символов");
+                    printOkMessage("2 должен содержать минимум одну маленькую букву");
+                    printOkMessage("3 должен содержать минимум одну большую букву");
+                    printOkMessage("4 должен содержать хотя бы одну цифру");
+                    printOkMessage("5 должен содержать хотя бы один спец символ из перечисленных: \"!#%$@&*()[],.-\"");
+                    printOkMessage("Пожалуйста, повторите попытку регистрации.");
+                } else {
+                    printOkMessage("\nВы успешно изменили свой пароль.");
+                    waitRead();
+                }
                 break;
             case 4:
-                //TODO выйти logout
+                boolean isLogout = service.logout();
+                if (isLogout) {
+                    printOkMessage("\nВы успешно вышли из системы,");
+                } else {
+                    printErrorMessage("\nНе удалось выполнить выход.");
+                }
                 break;
+            default:
+                printWarningMessage("\nСделайте корректный выбор");
+                waitRead();
         }
     }
 
@@ -180,74 +386,229 @@ public class Menu {
     private void showAdminMenu() {
         while (true) {
             if (service.getActiveUser() != null) {
-                if ( service.getActiveUser().getRole() == Role.ADMIN) {
-                    System.out.println("Меню администратора");
+                if (service.getActiveUser().getRole() == Role.ADMIN) {
+                    System.out.println("\nМеню администратора");
                     System.out.println("1 Добавить книгу");
-                    System.out.println("2 Редактировать информацию о книге");
-                    System.out.println("3 Разблокировать пользователя");
-                    System.out.println("4 Дать пользователю права администратора");
-                    System.out.println("5 Список всех пользователей");
+                    System.out.println("2 Удалить книгу");
+                    System.out.println("3 Редактировать информацию о книге");
+                    System.out.println("4 Разблокировать пользователя");
+                    System.out.println("5 Заблокировать пользователя");
+                    System.out.println("6 Дать пользователю права администратора");
+                    System.out.println("7 Список всех пользователей");
+                    System.out.println("8 Удалить пользователя");
                     System.out.println("0 Выйти в предыдущее меню");
+                    System.out.println("\n Выберите номер пункта меню");
                 } else {
-                    System.out.println("Простите, Вы не являетесь администратором.");
+                    printWarningMessage("\nПростите, Вы не являетесь администратором.");
                     waitRead();
                     break;
                 }
 
             } else {
-                System.out.println("Простите, Вы не вошли в систему.");
+                printWarningMessage("\nПростите, Вы не вошли в систему.");
                 waitRead();
                 break;
             }
 
-            int input = scanner.nextInt();
-            scanner.nextLine();
+            String input = scanner.nextLine();
 
-            if (input == 0) break;
+            if (isInteger(input)) {
+                int choice = Integer.parseInt(input);
 
-            handleAdminMenuInput(input);
+                if (choice == 0) break;
+
+                handleAdminMenuInput(choice);
+            } else {
+                printErrorMessage("\nВы ввели не число!");
+                waitRead();
+            }
+
         }
     }
 
     private void handleAdminMenuInput(int input) {
+        Book book;
         switch (input) {
             case 1:
-                //TODO добавить книгу
+                System.out.println("Введите название книги:");
+                String title = scanner.nextLine();
+                System.out.println("Введите автора книги:");
+                String author = scanner.nextLine();
+                System.out.println("Введите год печати книги:");
+                String dateYear = scanner.nextLine();
+                System.out.println("Введите жанр книги:");
+                String bookGenre = scanner.nextLine();
+                book = service.createBook(title, author, dateYear, bookGenre);
+                if (book == null) {
+                    printWarningMessage("\nК сожалению не удалось завести книгу.");
+                    printWarningMessage("Был не указан один из параметров книги.");
+                    waitRead();
+                } else {
+                    printOkMessage("Новая книга успешно заведена: " + book);
+                    waitRead();
+                }
                 break;
             case 2:
-                //TODO редактировать информацию о книге
+                //TODO Удалить книгу
                 break;
             case 3:
-                //TODO разблокировать пользователя
+                showEditBookMenu();
                 break;
             case 4:
-                //TODO Дать пользователю права администратора
+                //TODO разблокировать пользователя
                 break;
             case 5:
+                //TODO заблокировать пользователя
+                break;
+            case 6:
+                //TODO Дать пользователю права администратора
+                break;
+            case 7:
                 //TODO список всех пользователей
                 break;
+            case 8:
+                //TODO Удалить пользователя
+                break;
+            default:
+                printWarningMessage("\nСделайте корректный выбор");
+                waitRead();
         }
     }
 
-    // Печать пользователей
+    private void showEditBookMenu() {
+        while (true) {
+            System.out.println("\nМеню изменения данных о книге:");
+            System.out.println("1 Название книги");
+            System.out.println("2 Автора книги");
+            System.out.println("3 Год печати книги");
+            System.out.println("4 Жанр книги");
+            System.out.println("0 Выход в предыдущее меню");
+            System.out.println("\n Выберите номер пункта меню");
+
+            String input = scanner.nextLine();
+
+            if (isInteger(input)) {
+                int choice = Integer.parseInt(input);
+
+                if (choice == 0) break;
+
+                handleEditBookMenuInput(choice);
+            } else {
+                printErrorMessage("\nВы ввели не число!");
+                waitRead();
+            }
+        }
+    }
+
+    private void handleEditBookMenuInput(int input) {
+        Book book;
+        String bookStrId;
+        switch (input) {
+            case 1:
+                System.out.println("\nВведите id книги:");
+                bookStrId = scanner.nextLine();
+                if (isInteger(bookStrId)) {
+                    int bookIntId = Integer.parseInt(bookStrId);
+                    System.out.println("Введите название книги:");
+                    String title = scanner.nextLine();
+                    book = service.updateTitle(bookIntId, title);
+                    if (book == null) {
+                        printErrorMessage("Вы указали неверное id, некорректное название книги или книгу читают.");
+                        waitRead();
+                    } else {
+                        printOkMessage("Вы успешно изменили название книги:" + book);
+                        waitRead();
+                    }
+                } else {
+                    printErrorMessage("Вы ввели некорректный id.");
+                }
+                break;
+            case 2:
+                System.out.println("\nВведите id книги:");
+                bookStrId = scanner.nextLine();
+                if (isInteger(bookStrId)) {
+                    int bookIntId = Integer.parseInt(bookStrId);
+                    System.out.println("Введите автора книги:");
+                    String author = scanner.nextLine();
+                    book = service.updateAuthor(bookIntId, author);
+                    if (book == null) {
+                        printErrorMessage("Вы указали неверное id, некорректного автора книги или книгу читают.");
+                        waitRead();
+                    } else {
+                        printOkMessage("Вы успешно изменили автора книги:" + book);
+                        waitRead();
+                    }
+                } else {
+                    printErrorMessage("Вы ввели некорректный id.");
+                }
+                break;
+            case 3:
+                System.out.println("\nВведите id книги:");
+                bookStrId = scanner.nextLine();
+                if (isInteger(bookStrId)) {
+                    int bookIntId = Integer.parseInt(bookStrId);
+                    System.out.println("Введите год издания книги:");
+                    String dateYear = scanner.nextLine();
+                    book = service.updateDateYear(bookIntId, dateYear);
+                    if (book == null) {
+                        printErrorMessage("Вы указали неверное id, некорректный год издания книги или книгу читают.");
+                        waitRead();
+                    } else {
+                        printOkMessage("Вы успешно изменили год издания книги:" + book);
+                        waitRead();
+                    }
+                } else {
+                    printErrorMessage("Вы ввели некорректный id.");
+                }
+                break;
+            case 4:
+                //Todo изменяем жанр
+                break;
+            default:
+                printWarningMessage("\nСделайте корректный выбор");
+                waitRead();
+        }
+
+    }
+
+    // Печать книг
     private void showBooksList(MyList<Book> books) {
         for (Book book : books) {
-            //System.out.printf("%d. %s (%d г. выпуска). Цена 2.%f\n", );
+            System.out.printf("Id: %d | Название: %s | Автор: %s | Год издания: %s | Жанр: %s\n", book.getId(), book.getTitle(), book.getAuthor(), book.getDateYear(), book.getBookGenre());
         }
     }
 
     // Печать пользователей
     private void showUsersList(MyList<User> users) {
         for (User user : users) {
-            //System.out.printf("%d. %s (%d г. выпуска). Цена 2.%f\n", );
+            System.out.printf("Id: %d | E-mail: %s | Роль: %s\n", user.getUserId(), user.getEmail(), user.getRole());
         }
     }
 
     // Задержка в меню
     private void waitRead() {
-        System.out.println("\n Для продолжения нажмите Enter");
+        System.out.println("\nДля продолжения нажмите Enter");
         scanner.nextLine();
     }
 
+    // Проверяем что пользователь ввел число
+    private boolean isInteger(String str) {
+        return str.matches("\\d+"); // Только положительные целые числа (без нуля)
+    }
+
+    //Печать текста ошибки
+    private void printErrorMessage(String string) {
+        System.out.println(COLOR_RED + string + COLOR_RESET);
+    }
+
+    //Печать текста предупреждения
+    private void printWarningMessage(String string) {
+        System.out.println(COLOR_YELLOW + string + COLOR_RESET);
+    }
+
+    // Печать успешного сообщения
+    private void printOkMessage(String string) {
+        System.out.println(COLOR_GREEN + string + COLOR_RESET);
+    }
 
 } // END CLASS MENU
