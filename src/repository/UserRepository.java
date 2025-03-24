@@ -15,9 +15,9 @@ public interface UserRepository {
     boolean deleteUser(String email); // Только ADMIN
     User giveUserAdminRole(int id);
     boolean isEmailExist(String email);
-    boolean unblockUser(String email);
+    User unblockUser(String email);
     User unblockUser(int userId);
-    boolean blockUser(String email);
-    boolean blockUser(int id);
+    User blockUser(String email);
+    User blockUser(int id);
 
 }

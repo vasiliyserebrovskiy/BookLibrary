@@ -454,11 +454,69 @@ public class Menu {
             case 3:
                 showEditBookMenu();
                 break;
+
             case 4:
-                //TODO разблокировать пользователя
+                System.out.println("Введите 1 для разблокировки по email или 2 для разблокировки по id:");
+                String choice = scanner.nextLine();
+                if ("1".equals(choice)) {
+                    System.out.println("Введите email для разблокировки:");
+                    String email = scanner.nextLine();
+                    User user = service.unblockUser(email);
+                    if (user != null) {
+                        printOkMessage("Пользователь с email " + email + " успешно разблокирован.");
+                    } else {
+                        printErrorMessage("Не удалось разблокировать пользователя.");
+                    }
+                } else if ("2".equals(choice)) {
+                    System.out.println("Введите id пользователя для разблокировки:");
+                    String inputStrId = scanner.nextLine();
+                    if (isInteger(inputStrId)) {
+                        int userId = Integer.parseInt(inputStrId);
+                        User user = service.unblockUser(userId);
+                        if (user != null) {
+                            printOkMessage("Пользователь с id " + userId + " успешно разблокирован.");
+                        } else {
+                            printErrorMessage("Вы ввели некорректный id.");
+                        }
+                    } else {
+                        printErrorMessage("Вы ввели некорректный id.");
+                    }
+                } else {
+                    printErrorMessage("Неверный выбор.");
+                }
+                waitRead();
                 break;
+
             case 5:
-                //TODO заблокировать пользователя
+                System.out.println("Введите 1 для блокировки по email или 2 для блокировки по id: ");
+                choice = scanner.nextLine();
+                if ("1".equals(choice)) {
+                    System.out.println("Введите email для блокировки:");
+                    String email = scanner.nextLine();
+                    User user = service.blockUser(email);
+                    if (user != null) {
+                        printOkMessage("Пользователь с email " + email + " успешно заблокирован.");
+                    } else {
+                        printErrorMessage("Вы ввели некорректный email.");
+                    }
+                } else if ("2".equals(choice)) {
+                    System.out.println("Введите id пользователя для блокировки:");
+                    String inputStrId = scanner.nextLine();
+                    if (isInteger(inputStrId)) {
+                        int userId = Integer.parseInt(inputStrId);
+                        User user = service.blockUser(userId);
+                        if (user != null) {
+                            printOkMessage("Пользователь с id " + userId + " успешно заблокирован.");
+                        } else {
+                            printErrorMessage("Не удалось заблокировать пользователя.");
+                        }
+                    } else {
+                        printErrorMessage("Вы ввели некорректный id.");
+                    }
+                } else {
+                    printErrorMessage("Неверный выбор.");
+                }
+                waitRead();
                 break;
 
             case 6:
@@ -484,7 +542,15 @@ public class Menu {
                 waitRead();
                 break;
             case 8:
-                //TODO Удалить пользователя
+                System.out.println("Введите email пользователя для удаления: ");
+                String email = scanner.nextLine();
+                boolean delResult = service.deleteUser(email);
+                if (delResult) {
+                    printOkMessage("Пользователь с email " + email + " успешно удален. ");
+                } else {
+                        printErrorMessage("Не удалось найти пользователя. ");
+                }
+                waitRead();
                 break;
             default:
                 printWarningMessage("\nСделайте корректный выбор");

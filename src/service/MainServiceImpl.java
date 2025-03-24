@@ -85,47 +85,47 @@ public class MainServiceImpl implements MainService {
     }
 
     @Override
-    public boolean blockUser(String email) {
+    public User blockUser(String email) {
         if (activeUser.getRole() != Role.ADMIN) {
-            return false;
+            return null;
         }
         if (!UserValidation.isEmailValid(email)) {
-            return false;
+            return null;
         }
         User user = userRepository.getUserByEmail(email);
         if (user == null) {
-            return false;
+            return null;
         }
         return userRepository.blockUser(email);
     }
 
     @Override
-    public boolean blockUser(int userId) {
+    public User blockUser(int userId) {
         if (activeUser.getRole() != Role.ADMIN) {
-            return false;
+            return null;
         }
         if (userId <= 0) {
-            return false;
+            return null;
         }
 
         User user = userRepository.getUserById(userId);
         if (user == null) {
-            return false;
+            return null;
         }
         return userRepository.blockUser(userId);
     }
 
     @Override
-    public boolean unblockUser(String email) {
+    public User unblockUser(String email) {
         if (activeUser.getRole() != Role.ADMIN) {
-            return false;
+            return null;
         }
         if (!UserValidation.isEmailValid(email)) {
-            return false;
+            return null;
         }
         User user = userRepository.getUserByEmail(email);
         if (user == null) {
-            return false;
+            return null;
         }
         return userRepository.unblockUser(email);
     }

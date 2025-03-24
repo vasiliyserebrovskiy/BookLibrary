@@ -275,7 +275,7 @@ public class MainServiceTests {
 
         User user = service.getUserByEmail(email);
         System.out.println(user);
-        boolean test = service.blockUser(email);
+        User test = service.blockUser(email);
         System.out.println("test blockuser = " +test);
 
     }

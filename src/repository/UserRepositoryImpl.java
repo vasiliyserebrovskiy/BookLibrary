@@ -95,10 +95,10 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public boolean unblockUser(String email) {
+    public User unblockUser(String email) {
         User user = getUserByEmail(email);
         user.setRole(Role.USER);
-        return true;
+        return user;
     }
 
     @Override
@@ -109,17 +109,17 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public boolean blockUser(String email) {
+    public User blockUser(String email) {
         User user = getUserByEmail(email);
         user.setRole(Role.BLOCKED);
-        return true;
+        return user;
     }
 
     @Override
-    public boolean blockUser(int id) {
+    public User blockUser(int id) {
         User user = getUserById(id);
         user.setRole(Role.BLOCKED);
-        return true;
+        return user;
     }
 
     @Override
