@@ -48,7 +48,7 @@ public class MainServiceTests {
     }
 
     static Stream<Arguments> testCreateUser() {
-        return Stream.of(
+        return java.util.stream.Stream.of(
                 Arguments.of("test@test.com", "P@ssw0rd"),
                 Arguments.of("test2@test.ru", "P@ssw0rd1"),
                 Arguments.of("test34@mail.ru", "P@ssw0rd12")
@@ -67,7 +67,7 @@ public class MainServiceTests {
     }
 
     static Stream<Arguments> testNotCreateUser() {
-        return Stream.of(
+        return java.util.stream.Stream.of(
                 Arguments.of("test@@test.com", "P@ssw0rd"),
                 Arguments.of("1test2@mail.ru", "1qazXsw@"),
                 Arguments.of("test2@mailr.u", "1qazXsw@"),
@@ -81,11 +81,44 @@ public class MainServiceTests {
     }
 
     // Тестируем метод getUserByEmail
+    @ParameterizedTest
+    @MethodSource("testGetUserByEmail")
+    void testValidGetUserByEmail(String email){
+        User user = service.getUserByEmail(email);
+        assertNotNull(user);
+    }
 
-    // Тестируем метод getUserById
+    static Stream<Arguments> testGetUserByEmail() {
+        return java.util.stream.Stream.of(
+                org.junit.jupiter.params.provider.Arguments.of("user2@example.com"),
+                org.junit.jupiter.params.provider.Arguments.of("user3@example.com"),
+                org.junit.jupiter.params.provider.Arguments.of("user4@example.com")
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("testNotValidGetUserByEmail")
+    void testNotValidGetUserByEmail(String email){
+        User user = service.getUserByEmail(email);
+        assertNull(user);
+    }
+
+    static Stream<Arguments> testNotValidGetUserByEmail() {
+        return java.util.stream.Stream.of(
+                org.junit.jupiter.params.provider.Arguments.of("user6@example.com"),
+                org.junit.jupiter.params.provider.Arguments.of("user7@example.com"),
+                org.junit.jupiter.params.provider.Arguments.of("user8@example.com")
+        );
+    }
+
+    // Тестируем метод getUserById пока не используем
 
     //Тестируем метод getAllUsers
-
+    @Test
+    void testGetAllUsers() {
+        MyList<User> users = service.getAllUsers();
+        assertNotNull(users);
+    }
 
     //Проверка метода updatePassword
     @ParameterizedTest
@@ -99,7 +132,7 @@ public class MainServiceTests {
     }
 
     static Stream<Arguments> testUpdatePassword() {
-        return Stream.of(
+        return java.util.stream.Stream.of(
                 Arguments.of("user2@example.com", "Secure*987", "P@ssw0rd1"),
                 Arguments.of("user3@example.com", "TestUser@22", "P@ssw0rd@"),
                 Arguments.of("user4@example.com", "Pa$$w0rd99", "Qwert!y1")
@@ -119,7 +152,7 @@ public class MainServiceTests {
     }
 
     static Stream<Arguments> testNotUpdatePassword() {
-        return Stream.of(
+        return java.util.stream.Stream.of(
                 Arguments.of("user2@example.com", "Secure*987", "qwerty"),
                 Arguments.of("user2@example.com", "Secure*987", "qweRty"),
                 Arguments.of("user3@example.com", "TestUser@22", "Qwer3ty"),
@@ -145,7 +178,7 @@ public class MainServiceTests {
     }
 
     static Stream<Arguments> testLogin() {
-        return Stream.of(
+        return java.util.stream.Stream.of(
                 Arguments.of("user2@example.com", "Secure*987"),
                 Arguments.of("user3@example.com", "TestUser@22"),
                 Arguments.of("user4@example.com", "Pa$$w0rd99")
@@ -163,7 +196,7 @@ public class MainServiceTests {
     }
 
     static Stream<Arguments> testNotLogin() {
-        return Stream.of(
+        return java.util.stream.Stream.of(
                 Arguments.of("user2@example.com", "P@ssw0rd"),
                 Arguments.of("user3@example.com", "Pqssw0rd"),
                 Arguments.of("user4@example.com", "P@ssw0rd345")
@@ -183,7 +216,7 @@ public class MainServiceTests {
     }
 
     static Stream<Arguments> testLogout() {
-        return Stream.of(
+        return java.util.stream.Stream.of(
                 Arguments.of("user2@example.com", "Secure*987"),
                 Arguments.of("user3@example.com", "TestUser@22"),
                 Arguments.of("user4@example.com", "Pa$$w0rd99")
@@ -207,7 +240,7 @@ public class MainServiceTests {
     }
 
     static Stream<Arguments> testValidGetActiveUser() {
-        return Stream.of(
+        return java.util.stream.Stream.of(
                 Arguments.of("user2@example.com", "Secure*987"),
                 Arguments.of("user3@example.com", "TestUser@22"),
                 Arguments.of("user4@example.com", "Pa$$w0rd99")
@@ -234,6 +267,25 @@ public class MainServiceTests {
     }
 
     // Тестируем метод unblockUser by email
+    @ParameterizedTest
+    @MethodSource("testValidUnblockUser")
+    void testValidUnblockUser(String email) {
+        service.login("1","1");
+        System.out.println(service.getActiveUser());
+
+        User user = service.getUserByEmail(email);
+        System.out.println(user);
+        boolean test = service.blockUser(email);
+        System.out.println("test blockuser = " +test);
+
+    }
+    static Stream<Arguments> testValidUnblockUser() {
+        return Stream.of(
+                Arguments.of("user2@example.com"),
+                Arguments.of("user3@example.com"),
+                Arguments.of("user4@example.com")
+        );
+    }
 
     // Тестируем метод unblockUser by id
 
@@ -324,7 +376,7 @@ public class MainServiceTests {
     }
 
     static Stream<Arguments> testValidCreateBook() {
-        return Stream.of(
+        return java.util.stream.Stream.of(
                 Arguments.of("Test1","Test Author","1950","Horror"),
                 Arguments.of("Test2","Test Author","2000","Komedy"),
                 Arguments.of("Test3","Test Author","2020","Роман")
@@ -342,7 +394,7 @@ public class MainServiceTests {
     }
 
     static Stream<Arguments> testNotValidCreateBook() {
-        return Stream.of(
+        return java.util.stream.Stream.of(
                 Arguments.of("","Test Author","1950","Horror"),
                 Arguments.of("Test2","","2000","Komedy"),
                 Arguments.of("Test3","Test Author","","Роман"),

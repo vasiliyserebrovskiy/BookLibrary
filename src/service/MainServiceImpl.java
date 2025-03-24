@@ -312,9 +312,12 @@ public class MainServiceImpl implements MainService {
 
     @Override
     public Book updateGenre(int id, String bookGenre) {
-        if (id >0) {
+        if (id >0 && !bookGenre.isEmpty()) {
             if(bookRepository.isBookExist(id)) {
-                return bookRepository.getBookById(id);
+                Book book = getBookById(id);
+                if (book.getReadingUser() == null) {
+                    return bookRepository.updateGenre(id, bookGenre);
+                }
             }
         }
         return null;

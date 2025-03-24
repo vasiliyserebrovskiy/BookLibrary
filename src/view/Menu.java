@@ -562,7 +562,23 @@ public class Menu {
                 }
                 break;
             case 4:
-                //Todo изменяем жанр
+                System.out.println("\nВведите id книги:");
+                bookStrId = scanner.nextLine();
+                if (isInteger(bookStrId)) {
+                    int bookIntId = Integer.parseInt(bookStrId);
+                    System.out.println("Введите жанр книги:");
+                    String bookGenre = scanner.nextLine();
+                    book = service.updateGenre(bookIntId, bookGenre);
+                    if (book == null) {
+                        printErrorMessage("Вы указали неверное id, некорректный жанр книги или книгу читают.");
+                        waitRead();
+                    } else {
+                        printOkMessage("Вы успешно изменили год издания книги:" + book);
+                        waitRead();
+                    }
+                } else {
+                    printErrorMessage("Вы ввели некорректный id.");
+                }
                 break;
             default:
                 printWarningMessage("\nСделайте корректный выбор");
