@@ -10,7 +10,7 @@ public interface MainService {
     // Методу по работе с пользователем
 
     User createUser(String email, String password); //++
-    User getUserByEmail(String email);
+    User getUserByEmail(String email); //++
     User getUserById(int id);
     MyList<User> getAllUsers(); // Для отображения всех зарегистрированных пользователей
     User updatePassword(String newPassword); //++
