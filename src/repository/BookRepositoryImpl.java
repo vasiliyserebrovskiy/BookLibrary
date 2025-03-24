@@ -23,7 +23,7 @@ public class BookRepositoryImpl implements BookRepository {
 
     private void addStartBooks() {
         books.addAll(
-                new Book(currentBookId.getAndIncrement(), "Война и Мир", "Лев Николаевич Толстой", "1876", "роман"),
+                new Book(currentBookId.getAndIncrement(), "Война и Мир", "Лев Николаевич Толстой", "1867", "роман"),
                 new Book(currentBookId.getAndIncrement(), "Преступление и наказание", "Федор Михайлович Достоевский", "1866", "роман"),
                 new Book(currentBookId.getAndIncrement(), "Мертвые души", "Николай Васильевич Гоголь", "1835", "поэма"),
                 new Book(currentBookId.getAndIncrement(), "Вий", "Николай Васильевич Гоголь", "1833", "повесть"),
@@ -64,7 +64,8 @@ public class BookRepositoryImpl implements BookRepository {
     public MyList<Book> getAvailableBooks() {
         MyList<Book> availableBooks = new MyArrayList<>(); //  список доступных книг
         for (Book book : books) {
-            if (book.isAvailable()) {
+            // if (book.isAvailable()) {
+            if (book.getReadingUser() == null) {
                 availableBooks.add(book);
             }
             return availableBooks;
@@ -76,7 +77,8 @@ public class BookRepositoryImpl implements BookRepository {
     public MyList<Book> getBorrowedBooks() {
         MyList<Book> borrowedBooks = new MyArrayList<>(); //  список для взятых книг
         for (Book book : books) {
-            if (!book.isAvailable()) {
+            //if (!book.isAvailable()) {
+            if (book.getReadingUser() != null) {
                 borrowedBooks.add(book);
             }
         }
@@ -159,7 +161,8 @@ public class BookRepositoryImpl implements BookRepository {
 
     @Override
     public boolean deleteBookById(int id) {
-        return false;
+        Book book = getBookById(id);
+        return books.remove(book);
     }
 
     @Override
@@ -185,6 +188,8 @@ public class BookRepositoryImpl implements BookRepository {
 
     @Override
     public Book updateGenre(int id, String bookGenre) {
-        return null;
+        Book book = getBookById(id);
+        book.setBookGenre(bookGenre);
+        return book;
     }
 }
