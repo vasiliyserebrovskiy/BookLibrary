@@ -1,6 +1,7 @@
 package repository;
 
 import model.Book;
+import model.Role;
 import model.User;
 import utils.MyArrayList;
 import utils.MyList;
@@ -13,6 +14,7 @@ public class BookRepositoryImpl implements BookRepository {
 
     private final MyList<Book> books;
     private final AtomicInteger currentBookId = new AtomicInteger(1);
+    // private String author;
 
     public BookRepositoryImpl() {
         this.books = new MyArrayList<>();
@@ -21,7 +23,7 @@ public class BookRepositoryImpl implements BookRepository {
 
     private void addStartBooks() {
         books.addAll(
-                new Book(currentBookId.getAndIncrement(), "Война и Мир", "Лев Николаевич Толстой", "1876", "роман")  ,
+                new Book(currentBookId.getAndIncrement(), "Война и Мир", "Лев Николаевич Толстой", "1876", "роман"),
                 new Book(currentBookId.getAndIncrement(), "Преступление и наказание", "Федор Михайлович Достоевский", "1866", "роман"),
                 new Book(currentBookId.getAndIncrement(), "Мертвые души", "Николай Васильевич Гоголь", "1835", "поэма"),
                 new Book(currentBookId.getAndIncrement(), "Вий", "Николай Васильевич Гоголь", "1833", "повесть"),
@@ -33,51 +35,108 @@ public class BookRepositoryImpl implements BookRepository {
                 new Book(currentBookId.getAndIncrement(), "Война миров", "Уэллс, Герберт Джордж ", "1897", "научно-фантастический роман"),
                 new Book(currentBookId.getAndIncrement(), "Роме́о и Джулье́тта", "Уи́льям Шекспи́р  ", "1594", "трагедия")
 
-                );
+        );
     }
 
     @Override
     public Book addBook(String title, String author, String dateYear, String bookGenre) {
-        return null;
+        Book book = new Book(currentBookId.getAndIncrement(), title, author, dateYear, bookGenre);
+        books.add(book);
+        return book;
+
     }
 
     @Override
     public Book getBookById(int id) {
+        for (Book book : books) {
+            if (book.getId() == id) return book;
+
+        }
         return null;
     }
 
     @Override
     public MyList<Book> getAllBooks() {
-        return null;
+        return books;
     }
 
     @Override
     public MyList<Book> getAvailableBooks() {
+        MyList<Book> availableBooks = new MyArrayList<>(); //  список доступных книг
+        for (Book book : books) {
+            if (book.isAvailable()) {
+                availableBooks.add(book);
+            }
+            return availableBooks;
+        }
         return null;
     }
 
     @Override
     public MyList<Book> getBorrowedBooks() {
-        return null;
+        MyList<Book> borrowedBooks = new MyArrayList<>(); //  список для взятых книг
+        for (Book book : books) {
+            if (!book.isAvailable()) {
+                borrowedBooks.add(book);
+            }
+        }
+        return borrowedBooks;
     }
+
 
     @Override
     public MyList<Book> getMyBooks(User user) {
-        return null;
+        MyList<Book> myBooks = new MyArrayList<>(); // список книг у пользователя
+        for (Book book : books) {
+            if (book.getReadingUser().equals(user)) {
+                myBooks.add(book);
+            }
+        }
+        return myBooks;
     }
+
 
     @Override
     public MyList<Book> getBooksByTitle(String title) {
+        MyList<Book> result = new MyArrayList<>();
+        // Перебираю список книг, если название совпало (или частично совпало)
+        for (Book book : books) {
+
+
+            if (book.getTitle().contains(title)) {
+                result.add(book);
+            }
+            return result;
+        }
         return null;
     }
 
+
     @Override
     public MyList<Book> getBooksByAuthor(String author) {
+        MyList<Book> result = new MyArrayList<>();
+        // Перебираю авторов книг, если автор совпал (или частично совпало)
+        for (Book book : books) {
+
+            if (book.getAuthor().contains(author)) {
+                result.add(book);
+            }
+            return result;
+        }
         return null;
     }
 
     @Override
     public Book userGetBook(int id, User user) {
+        for (Book book : books) {
+
+            if (book.getId() == id) {
+                book.setReadingUser(user);
+                return book;
+            }
+
+        }
+
         return null;
     }
 

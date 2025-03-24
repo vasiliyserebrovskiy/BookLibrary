@@ -124,6 +124,10 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User giveUserAdminRole(int id) {
-        return null;
+        User user = getUserById(id);
+        if (user != null) {
+            user.setRole(Role.ADMIN);
+        }
+        return user;
     }
 }

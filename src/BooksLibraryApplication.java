@@ -6,10 +6,6 @@ import service.MainService;
 import service.MainServiceImpl;
 import view.Menu;
 
-/**
- * @author Vasilii Serebrovskii
- * @version 1.0 (21.03.2025)
- */
 public class BooksLibraryApplication {
     public static void main(String[] args) {
 

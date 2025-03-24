@@ -460,11 +460,28 @@ public class Menu {
             case 5:
                 //TODO заблокировать пользователя
                 break;
+
             case 6:
-                //TODO Дать пользователю права администратора
+                System.out.println("Введите id пользователя для назначения прав администратора: ");
+                String inputStrId = scanner.nextLine();
+                if (isInteger(inputStrId)) {
+                    int userId = Integer.parseInt(inputStrId);
+                    User user = service.giveUserAdminRole(userId);
+                    if (user != null) {
+                        printOkMessage("Пользователю с id " + userId + " успешно даны права администратора.");
+                    } else {
+                        printErrorMessage("Вы ввели некорректный id.");
+                    }
+                    waitRead();
+                } else {
+                    printErrorMessage("Вы ввели некорректный id.");
+                    waitRead();
+                }
                 break;
+
             case 7:
-                //TODO список всех пользователей
+                showUsersList(service.getAllUsers());
+                waitRead();
                 break;
             case 8:
                 //TODO Удалить пользователя
@@ -562,7 +579,23 @@ public class Menu {
                 }
                 break;
             case 4:
-                //Todo изменяем жанр
+                System.out.println("\nВведите id книги:");
+                bookStrId = scanner.nextLine();
+                if (isInteger(bookStrId)) {
+                    int bookIntId = Integer.parseInt(bookStrId);
+                    System.out.println("Введите жанр книги:");
+                    String bookGenre = scanner.nextLine();
+                    book = service.updateGenre(bookIntId, bookGenre);
+                    if (book == null) {
+                        printErrorMessage("Вы указали неверное id, некорректный жанр книги или книгу читают.");
+                        waitRead();
+                    } else {
+                        printOkMessage("Вы успешно изменили год издания книги:" + book);
+                        waitRead();
+                    }
+                } else {
+                    printErrorMessage("Вы ввели некорректный id.");
+                }
                 break;
             default:
                 printWarningMessage("\nСделайте корректный выбор");
