@@ -39,7 +39,7 @@ public class MainServiceImpl implements MainService {
             return null;
         }
         // создаем юзера
-        return userRepository.addUser(email,password);
+        return userRepository.addUser(email, password);
     }
 
     @Override
@@ -180,7 +180,6 @@ public class MainServiceImpl implements MainService {
     }
 
 
-
     // Books
 
     @Override
@@ -233,17 +232,27 @@ public class MainServiceImpl implements MainService {
 
     @Override
     public Book userGetBook(int bookId) {
+        Book book;
+        if (bookId > 0) {
+            book = bookRepository.getBookById(bookId);
+            if (book != null && book.getReadingUser().equals(activeUser)) {
+                book = bookRepository.userGetBook(bookId, activeUser);
+                return book;
+            }
+            return null;
+        }
 
         return null;
     }
 
     @Override
     public Book userReturnBook(int bookId) {
+        Book book;
         if (bookId > 0) {
-            Book book = bookRepository.getBookById(bookId);
-            if (book != null) {
-                Book book2 = bookRepository.userReturnBook(bookId);
-                return book2;
+            book = bookRepository.getBookById(bookId);
+            if (book != null && book.getReadingUser().equals(activeUser)) {
+                book = bookRepository.userReturnBook(bookId);
+                return book;
             }
             return null;
         }
@@ -312,8 +321,8 @@ public class MainServiceImpl implements MainService {
 
     @Override
     public Book updateGenre(int id, String bookGenre) {
-        if (id >0) {
-            if(bookRepository.isBookExist(id)) {
+        if (id > 0) {
+            if (bookRepository.isBookExist(id)) {
                 return bookRepository.getBookById(id);
             }
         }
@@ -322,6 +331,12 @@ public class MainServiceImpl implements MainService {
 
     @Override
     public Book whoReadBook(int id) {
+        if (id > 0) {
+            Book book = bookRepository.getBookById(id);
+            if (book != null) {
+                return bookRepository.getBookById(id);
+            }
+        }
         return null;
     }
 }
