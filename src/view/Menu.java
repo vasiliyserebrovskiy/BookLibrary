@@ -460,11 +460,28 @@ public class Menu {
             case 5:
                 //TODO заблокировать пользователя
                 break;
+
             case 6:
-                //TODO Дать пользователю права администратора
+                System.out.println("Введите id пользователя для назначения прав администратора: ");
+                String inputStrId = scanner.nextLine();
+                if (isInteger(inputStrId)) {
+                    int userId = Integer.parseInt(inputStrId);
+                    User user = service.giveUserAdminRole(userId);
+                    if (user != null) {
+                        printOkMessage("Пользователю с id " + userId + " успешно даны права администратора.");
+                    } else {
+                        printErrorMessage("Вы ввели некорректный id.");
+                    }
+                    waitRead();
+                } else {
+                    printErrorMessage("Вы ввели некорректный id.");
+                    waitRead();
+                }
                 break;
+
             case 7:
-                //TODO список всех пользователей
+                showUsersList(service.getAllUsers());
+                waitRead();
                 break;
             case 8:
                 //TODO Удалить пользователя
