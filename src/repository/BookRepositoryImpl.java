@@ -68,9 +68,8 @@ public class BookRepositoryImpl implements BookRepository {
             if (book.getReadingUser() == null) {
                 availableBooks.add(book);
             }
-            return availableBooks;
         }
-        return null;
+        return availableBooks;
     }
 
     @Override
@@ -90,7 +89,7 @@ public class BookRepositoryImpl implements BookRepository {
     public MyList<Book> getMyBooks(User user) {
         MyList<Book> myBooks = new MyArrayList<>(); // список книг у пользователя
         for (Book book : books) {
-            if (book.getReadingUser().equals(user)) {
+            if (book.getReadingUser() != null && book.getReadingUser().equals(user)) {
                 myBooks.add(book);
             }
         }
@@ -103,14 +102,11 @@ public class BookRepositoryImpl implements BookRepository {
         MyList<Book> result = new MyArrayList<>();
         // Перебираю список книг, если название совпало (или частично совпало)
         for (Book book : books) {
-
-
-            if (book.getTitle().contains(title)) {
+            if (book.getTitle().toLowerCase().contains(title.toLowerCase())) {
                 result.add(book);
             }
-            return result;
         }
-        return null;
+        return result;
     }
 
 
@@ -119,13 +115,11 @@ public class BookRepositoryImpl implements BookRepository {
         MyList<Book> result = new MyArrayList<>();
         // Перебираю авторов книг, если автор совпал (или частично совпало)
         for (Book book : books) {
-
-            if (book.getAuthor().contains(author)) {
+            if (book.getAuthor().toLowerCase().contains(author.toLowerCase())) {
                 result.add(book);
             }
-            return result;
         }
-        return null;
+        return result;
     }
 
     @Override

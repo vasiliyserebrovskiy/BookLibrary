@@ -5,6 +5,7 @@ import model.User;
 import service.MainService;
 import utils.MyList;
 import model.Book;
+
 import java.util.Scanner;
 
 public class Menu {
@@ -195,7 +196,7 @@ public class Menu {
                     Book book = service.userGetBook(bookIntId);
                     if (book == null) {
                         printWarningMessage("\nНе удалось взять книгу с id:" + bookStrId);
-                        printWarningMessage("Книги с таким id нет или ее уже кто-то читает.");
+                        printWarningMessage("Книги с таким id нет, ее уже кто-то читает или вы заблокированы.");
                         waitRead();
                     } else {
                         System.out.println("\nВы успешно взяли книгу: " + book);
@@ -232,12 +233,12 @@ public class Menu {
 
                 if (isInteger(bookStrId)) {
                     int bookIntId = Integer.parseInt(bookStrId);
-                    Book book = service.whoReadBook(bookIntId);
-                    if (book == null) {
-                        printWarningMessage("\nНе найдено книги с id:" + bookIntId);
+                    User user = service.whoReadBook(bookIntId);
+                    if (user == null) {
+                        printWarningMessage("\nНе найдено книги с id или ее никто не читает: " + bookIntId);
                         waitRead();
                     } else {
-                        printOkMessage("Книгу с id:" + book.getId() + " читает " + book.getReadingUser());
+                        printOkMessage("Книгу с id:" + bookIntId + " читает " + user);
                         waitRead();
                     }
                 } else {
@@ -260,7 +261,7 @@ public class Menu {
                 System.out.println("1 Вход в систему");
                 System.out.println("2 Зарегистрироваться");
                 System.out.println("0 Выйти в предыдущее меню");
-                System.out.println("\n Выберите номер пункта меню");
+                System.out.println("\nВыберите номер пункта меню");
             } else {
                 System.out.println("\nМеню пользователя:");
                 System.out.println("1 Вход в систему");
@@ -268,7 +269,7 @@ public class Menu {
                 System.out.println("3 Изменить пароль");
                 System.out.println("4 Выйти");
                 System.out.println("0 Выйти в предыдущее меню");
-                System.out.println("\n Выберите номер пункта меню");
+                System.out.println("\nВыберите номер пункта меню");
             }
 
             String input = scanner.nextLine();
@@ -363,6 +364,7 @@ public class Menu {
                     printOkMessage("4 должен содержать хотя бы одну цифру");
                     printOkMessage("5 должен содержать хотя бы один спец символ из перечисленных: \"!#%$@&*()[],.-\"");
                     printOkMessage("Пожалуйста, повторите попытку регистрации.");
+                    waitRead();
                 } else {
                     printOkMessage("\nВы успешно изменили свой пароль.");
                     waitRead();
@@ -397,7 +399,7 @@ public class Menu {
                     System.out.println("7 Список всех пользователей");
                     System.out.println("8 Удалить пользователя");
                     System.out.println("0 Выйти в предыдущее меню");
-                    System.out.println("\n Выберите номер пункта меню");
+                    System.out.println("\nВыберите номер пункта меню");
                 } else {
                     printWarningMessage("\nПростите, Вы не являетесь администратором.");
                     waitRead();
@@ -428,6 +430,8 @@ public class Menu {
 
     private void handleAdminMenuInput(int input) {
         Book book;
+        User user;
+        String choice;
         switch (input) {
             case 1:
                 System.out.println("Введите название книги:");
@@ -441,7 +445,7 @@ public class Menu {
                 book = service.createBook(title, author, dateYear, bookGenre);
                 if (book == null) {
                     printWarningMessage("\nК сожалению не удалось завести книгу.");
-                    printWarningMessage("Был не указан один из параметров книги.");
+                    printWarningMessage("Был не указан один из параметров книги или параметры книги были заданы не верно.");
                     waitRead();
                 } else {
                     printOkMessage("Новая книга успешно заведена: " + book);
@@ -449,7 +453,6 @@ public class Menu {
                 }
                 break;
             case 2:
-                //TODO Удалить книгу
                 System.out.println("Введите id книги, которую вы хотите удалить:");
                 String bookStrId = scanner.nextLine();
                 if (isInteger(bookStrId)) {
@@ -472,11 +475,11 @@ public class Menu {
 
             case 4:
                 System.out.println("Введите 1 для разблокировки по email или 2 для разблокировки по id:");
-                String choice = scanner.nextLine();
+                choice = scanner.nextLine();
                 if ("1".equals(choice)) {
                     System.out.println("Введите email для разблокировки:");
                     String email = scanner.nextLine();
-                    User user = service.unblockUser(email);
+                    user = service.unblockUser(email);
                     if (user != null) {
                         printOkMessage("Пользователь с email " + email + " успешно разблокирован.");
                     } else {
@@ -487,7 +490,7 @@ public class Menu {
                     String inputStrId = scanner.nextLine();
                     if (isInteger(inputStrId)) {
                         int userId = Integer.parseInt(inputStrId);
-                        User user = service.unblockUser(userId);
+                        user = service.unblockUser(userId);
                         if (user != null) {
                             printOkMessage("Пользователь с id " + userId + " успешно разблокирован.");
                         } else {
@@ -508,22 +511,33 @@ public class Menu {
                 if ("1".equals(choice)) {
                     System.out.println("Введите email для блокировки:");
                     String email = scanner.nextLine();
-                    User user = service.blockUser(email);
-                    if (user != null) {
-                        printOkMessage("Пользователь с email " + email + " успешно заблокирован.");
+                    user = service.getUserByEmail(email);
+                    if (user.getRole() == Role.BLOCKED) {
+                        printWarningMessage("Пользователь c email " + email + " уже заблокирован.");
+                        waitRead();
                     } else {
-                        printErrorMessage("Вы ввели некорректный email.");
+                        user = service.blockUser(email);
+                        if (user != null) {
+                            printOkMessage("Пользователь с email " + email + " успешно заблокирован.");
+                        } else {
+                            printErrorMessage("Вы ввели некорректный email.");
+                        }
                     }
                 } else if ("2".equals(choice)) {
                     System.out.println("Введите id пользователя для блокировки:");
                     String inputStrId = scanner.nextLine();
                     if (isInteger(inputStrId)) {
                         int userId = Integer.parseInt(inputStrId);
-                        User user = service.blockUser(userId);
-                        if (user != null) {
-                            printOkMessage("Пользователь с id " + userId + " успешно заблокирован.");
+                        user = service.getUserById(userId);
+                        if (user.getRole() == Role.BLOCKED) {
+                            printWarningMessage("Пользователь с id " + userId + " уже заблокирован.");
                         } else {
-                            printErrorMessage("Не удалось заблокировать пользователя.");
+                            user = service.blockUser(userId);
+                            if (user != null) {
+                                printOkMessage("Пользователь с id " + userId + " успешно заблокирован.");
+                            } else {
+                                printErrorMessage("Не удалось заблокировать пользователя.");
+                            }
                         }
                     } else {
                         printErrorMessage("Вы ввели некорректный id.");
@@ -539,7 +553,7 @@ public class Menu {
                 String inputStrId = scanner.nextLine();
                 if (isInteger(inputStrId)) {
                     int userId = Integer.parseInt(inputStrId);
-                    User user = service.giveUserAdminRole(userId);
+                    user = service.giveUserAdminRole(userId);
                     if (user != null) {
                         printOkMessage("Пользователю с id " + userId + " успешно даны права администратора.");
                     } else {
@@ -563,7 +577,7 @@ public class Menu {
                 if (delResult) {
                     printOkMessage("Пользователь с email " + email + " успешно удален. ");
                 } else {
-                        printErrorMessage("Не удалось найти пользователя. ");
+                    printErrorMessage("Не удалось найти пользователя. ");
                 }
                 waitRead();
                 break;
@@ -581,7 +595,7 @@ public class Menu {
             System.out.println("3 Год печати книги");
             System.out.println("4 Жанр книги");
             System.out.println("0 Выход в предыдущее меню");
-            System.out.println("\n Выберите номер пункта меню");
+            System.out.println("\nВыберите номер пункта меню");
 
             String input = scanner.nextLine();
 
