@@ -430,12 +430,160 @@ public class MainServiceTests {
     // Тестируем метод deleteBookById
 
     // Тестируем метод updateTitle
+    @ParameterizedTest
+    @MethodSource("testValidUpdateTitle")
+    void testValidUpdateTitle(int id, String title) {
+
+        boolean login = service.login("1", "1");
+        // User expectedUser = service.getUserByEmail(email);
+        Book book = service.updateTitle(id, title);
+        assertNotNull(book);
+        assertEquals(title,book.getTitle());
+    }
+
+    static Stream<Arguments> testValidUpdateTitle() {
+        return java.util.stream.Stream.of(
+                Arguments.of("1","Test Title"),
+                Arguments.of("1","Test Title 2")
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("testNotValidUpdateTitle")
+    void testNotValidUpdateTitle(int id, String title) {
+
+        boolean login = service.login("1", "1");
+        // User expectedUser = service.getUserByEmail(email);
+        Book book = service.updateTitle(id, title);
+        assertNull(book);
+    }
+
+    static Stream<Arguments> testNotValidUpdateTitle() {
+        return java.util.stream.Stream.of(
+                Arguments.of("1",""),
+                Arguments.of("7","  "),
+                Arguments.of("25","       "),
+                Arguments.of("56","Test Title 2")
+        );
+    }
 
     // Тестируем метод updateAuthor
+    @ParameterizedTest
+    @MethodSource("testValidUpdateAuthor")
+    void testValidUpdateAuthor(int id, String author) {
+
+        boolean login = service.login("1", "1");
+        // User expectedUser = service.getUserByEmail(email);
+        Book book = service.updateAuthor(id, author);
+        assertNotNull(book);
+        assertEquals(author,book.getAuthor());
+    }
+
+    static Stream<Arguments> testValidUpdateAuthor() {
+        return java.util.stream.Stream.of(
+                Arguments.of("1","Test Author"),
+                Arguments.of("1","Test Author 2")
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("testNotValidUpdateAuthor")
+    void testNotValidUpdateAuthor(int id, String author) {
+
+        boolean login = service.login("1", "1");
+        // User expectedUser = service.getUserByEmail(email);
+        Book book = service.updateAuthor(id, author);
+        assertNull(book);
+    }
+
+    static Stream<Arguments> testNotValidUpdateAuthor() {
+        return java.util.stream.Stream.of(
+                Arguments.of("1",""),
+                Arguments.of("0","New Author"),
+                Arguments.of("7","  "),
+                Arguments.of("25","       "),
+                Arguments.of("56","Test Title 2")
+        );
+    }
+
 
     // Тестируем метод updateDateYear
+    @ParameterizedTest
+    @MethodSource("testValidUpdateDateYear")
+    void testValidUpdateDateYear(int id, String dateYear) {
+
+        boolean login = service.login("1", "1");
+        // User expectedUser = service.getUserByEmail(email);
+        Book book = service.updateDateYear(id, dateYear);
+        assertNotNull(book);
+        assertEquals(dateYear,book.getDateYear());
+    }
+
+    static Stream<Arguments> testValidUpdateDateYear() {
+        return java.util.stream.Stream.of(
+                Arguments.of("1","1900"),
+                Arguments.of("1","1923")
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("testNotValidUpdateDateYear")
+    void testNotValidUpdateDateYear(int id, String dateYear) {
+
+        boolean login = service.login("1", "1");
+        // User expectedUser = service.getUserByEmail(email);
+        Book book = service.updateDateYear(id, dateYear);
+        assertNull(book);
+    }
+
+    static Stream<Arguments> testNotValidUpdateDateYear() {
+        return java.util.stream.Stream.of(
+                Arguments.of("1",""),
+                Arguments.of("0","1982"),
+                Arguments.of("7","  "),
+                Arguments.of("25","       "),
+                Arguments.of("56","Test Title 2")
+        );
+    }
 
     // Тестируем метод updateGenre
+    @ParameterizedTest
+    @MethodSource("testValidUpdateGenre")
+    void testValidUpdateGenre(int id, String bookGenre) {
+
+        boolean login = service.login("1", "1");
+        // User expectedUser = service.getUserByEmail(email);
+        Book book = service.updateGenre(id, bookGenre);
+        assertNotNull(book);
+        assertEquals(bookGenre,book.getBookGenre());
+    }
+
+    static Stream<Arguments> testValidUpdateGenre() {
+        return java.util.stream.Stream.of(
+                Arguments.of("1","Комедия"),
+                Arguments.of("3","История")
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("testNotValidUpdateAuthor")
+    void testNotValidUpdateGenre(int id, String bookGenre) {
+
+        boolean login = service.login("1", "1");
+        // User expectedUser = service.getUserByEmail(email);
+        Book book = service.updateAuthor(id, bookGenre);
+        assertNull(book);
+    }
+
+    static Stream<Arguments> testNotValidUpdateGenre() {
+        return java.util.stream.Stream.of(
+                Arguments.of("1",""),
+                Arguments.of("0","New Author"),
+                Arguments.of("7","  "),
+                Arguments.of("25","       "),
+                Arguments.of("56","Ужасы")
+        );
+    }
 
 } // END OF
 

@@ -450,6 +450,21 @@ public class Menu {
                 break;
             case 2:
                 //TODO Удалить книгу
+                System.out.println("Введите id книги, которую вы хотите удалить:");
+                String bookStrId = scanner.nextLine();
+                if (isInteger(bookStrId)) {
+                    int bookIntId = Integer.parseInt(bookStrId);
+                    book = service.deleteBookById(bookIntId);
+                    if (book == null) {
+                        printErrorMessage("Не удалось удалить книгу с id " + bookIntId);
+                    } else {
+                        printOkMessage("Вы успешно удалили книгу: " + book);
+                    }
+                    waitRead();
+                } else {
+                    printErrorMessage("Вы ввели некорректный id.");
+                    waitRead();
+                }
                 break;
             case 3:
                 showEditBookMenu();
@@ -533,11 +548,12 @@ public class Menu {
                         printErrorMessage("Вы указали неверное id, некорректное название книги или книгу читают.");
                         waitRead();
                     } else {
-                        printOkMessage("Вы успешно изменили название книги:" + book);
+                        printOkMessage("Вы успешно изменили название книги: " + book);
                         waitRead();
                     }
                 } else {
                     printErrorMessage("Вы ввели некорректный id.");
+                    waitRead();
                 }
                 break;
             case 2:
@@ -552,11 +568,12 @@ public class Menu {
                         printErrorMessage("Вы указали неверное id, некорректного автора книги или книгу читают.");
                         waitRead();
                     } else {
-                        printOkMessage("Вы успешно изменили автора книги:" + book);
+                        printOkMessage("Вы успешно изменили автора книги: " + book);
                         waitRead();
                     }
                 } else {
                     printErrorMessage("Вы ввели некорректный id.");
+                    waitRead();
                 }
                 break;
             case 3:
@@ -571,11 +588,12 @@ public class Menu {
                         printErrorMessage("Вы указали неверное id, некорректный год издания книги или книгу читают.");
                         waitRead();
                     } else {
-                        printOkMessage("Вы успешно изменили год издания книги:" + book);
+                        printOkMessage("Вы успешно изменили год издания книги: " + book);
                         waitRead();
                     }
                 } else {
                     printErrorMessage("Вы ввели некорректный id.");
+                    waitRead();
                 }
                 break;
             case 4:
@@ -590,11 +608,12 @@ public class Menu {
                         printErrorMessage("Вы указали неверное id, некорректный жанр книги или книгу читают.");
                         waitRead();
                     } else {
-                        printOkMessage("Вы успешно изменили год издания книги:" + book);
+                        printOkMessage("Вы успешно изменили жанр книги: " + book);
                         waitRead();
                     }
                 } else {
                     printErrorMessage("Вы ввели некорректный id.");
+                    waitRead();
                 }
                 break;
             default:
@@ -626,7 +645,7 @@ public class Menu {
 
     // Проверяем что пользователь ввел число
     private boolean isInteger(String str) {
-        return str.matches("\\d+"); // Только положительные целые числа (без нуля)
+        return str.matches("\\d+"); // Только положительные целые числа
     }
 
     //Печать текста ошибки

@@ -272,11 +272,16 @@ public class MainServiceImpl implements MainService {
     }
 
     @Override
-    public boolean deleteBookById(int id) {
+    public Book deleteBookById(int id) {
         if (id > 0) {
-            return bookRepository.deleteBookById(id);
+            if (bookRepository.isBookExist(id)) {
+                Book book = bookRepository.getBookById(id);
+                if (book.getReadingUser() == null) {
+                    return bookRepository.deleteBookById(id);
+                }
+            }
         }
-        return false;
+        return null;
     }
 
     @Override
@@ -287,11 +292,11 @@ public class MainServiceImpl implements MainService {
 
     @Override
     public Book updateTitle(int id, String title) {
-        if (id > 0 && !title.isEmpty()) {
+        if (id > 0 && !title.isEmpty() && !isSpaces(title)) {
             if (bookRepository.isBookExist(id)) {
                 //проверяем что книга не на руках
-                Book book = getBookById(id);
-                if (book.getReadingUser() == null) {
+                User user = bookRepository.getReadingUser(id);
+                if (user == null) {
                     return bookRepository.updateTitle(id, title);
                 }
             }
@@ -301,11 +306,11 @@ public class MainServiceImpl implements MainService {
 
     @Override
     public Book updateAuthor(int id, String author) {
-        if (id > 0 && !author.isEmpty()) {
+        if (id > 0 && !author.isEmpty() && !isSpaces(author)) {
             if (bookRepository.isBookExist(id)) {
                 //проверяем что книга не на руках
-                Book book = getBookById(id);
-                if (book.getReadingUser() == null) {
+                User user = bookRepository.getReadingUser(id);
+                if (user == null) {
                     return bookRepository.updateAuthor(id, author);
                 }
             }
@@ -315,11 +320,11 @@ public class MainServiceImpl implements MainService {
 
     @Override
     public Book updateDateYear(int id, String dateYear) {
-        if (id > 0 && !dateYear.isEmpty()) {
+        if (id > 0 && !dateYear.isEmpty() && !isSpaces(dateYear) && isInteger(dateYear)) {
             if (bookRepository.isBookExist(id)) {
                 //проверяем что книга не на руках
-                Book book = getBookById(id);
-                if (book.getReadingUser() == null) {
+                User user = bookRepository.getReadingUser(id);
+                if (user == null) {
                     return bookRepository.updateDateYear(id, dateYear);
                 }
             }
@@ -329,10 +334,12 @@ public class MainServiceImpl implements MainService {
 
     @Override
     public Book updateGenre(int id, String bookGenre) {
-        if (id > 0) {
+        if (id > 0 && !bookGenre.isEmpty() && !isSpaces(bookGenre)) {
             if (bookRepository.isBookExist(id)) {
-                return bookRepository.getBookById(id);
-       
+                User user = bookRepository.getReadingUser(id);
+                if (user == null) {
+                    return bookRepository.updateGenre(id, bookGenre);
+                }
             }
         }
         return null;
@@ -341,11 +348,18 @@ public class MainServiceImpl implements MainService {
     @Override
     public Book whoReadBook(int id) {
         if (id > 0) {
-            Book book = bookRepository.getBookById(id);
-            if (book != null) {
-                return bookRepository.getBookById(id);
+            if (bookRepository.isBookExist(id)) {
+                    return bookRepository.getBookById(id);
             }
         }
         return null;
+    }
+
+    private boolean isSpaces(String str) {
+        return str.matches("\\s+"); // Только положительные целые числа
+    }
+
+    private boolean isInteger(String str) {
+        return str.matches("\\d+"); // Только положительные целые числа
     }
 }

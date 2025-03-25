@@ -42,12 +42,13 @@ public interface MainService {
     // Вернуть книгу
     Book userReturnBook(int bookId);
     Book whoReadBook(int id);
-    boolean deleteBookById(int id);
+    Book deleteBookById(int id);
 
     // Изменение данных о книге
     Book updateTitle(int id, String title);
     Book updateAuthor(int id, String author);
     Book updateDateYear(int id, String dateYear);
     Book updateGenre(int id, String bookGenre);
+
 
 }
