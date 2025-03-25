@@ -196,6 +196,27 @@ public class MainServiceTests {
     }
 
     // Тестируем метод deleteUser - Тим
+    @ParameterizedTest
+    @ValueSource(strings = {"user4@example.com","user2@example.com"})
+    void testValidDeleteUser(String email){
+        service.login("1","1");
+
+        boolean isDelete = service.deleteUser(email);
+        assertEquals(true, isDelete);
+        User user = service.getUserByEmail(email);
+        assertNull(user);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"user33@example.com","user44@example.com"})
+    void testNotValidDeleteUser(String email){
+        service.login("1","1");
+        boolean isDelete = service.deleteUser(email);
+        assertEquals(false, isDelete);
+
+    }
+
+
 
     // Тестируем метод giveUserAdminRole - Игорь
     @ParameterizedTest
@@ -583,8 +604,44 @@ public class MainServiceTests {
     // Тестируем метод getBooksByAuthor
 
     // Тестируем метод userGetBook
+    @ParameterizedTest
+    @ValueSource(ints = {1,4,6})
+    void testValidUserGetBook(int id){
+        service.login("2","2");
+        Book book = service.userGetBook(id);
+        assertNotNull(book);
+        assertNotNull(book.getReadingUser());
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {12,43,67})
+    void testNotValidUserGetBook(int id){
+        service.login("2","2");
+        Book book = service.userGetBook(id);
+        assertNull(book);
+
+    }
 
     // Тестируем метод userReturnBook
+    @ParameterizedTest
+    @ValueSource(ints = {1,4,6})
+    void testValidUserReturnBook(int id){
+        service.login("2","2");
+        service.userGetBook(id);
+
+        Book book = service.userReturnBook(id);
+        assertNotNull(book);
+        assertNull(book.getReadingUser());
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {12,43,67})
+    void testNotValidUserReturnBook(int id){
+        service.login("2","2");
+        Book book = service.userReturnBook(id);
+        assertNull(book);
+    }
+
 
     // Тестируем метод whoReadBook
 
