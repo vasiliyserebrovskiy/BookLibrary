@@ -152,11 +152,11 @@ public class MainServiceImpl implements MainService {
 
     @Override
     public User giveUserAdminRole(int id) {
-        if (activeUser == null || activeUser.getRole() != Role.ADMIN) {
+        if (activeUser == null && activeUser.getRole() != Role.ADMIN) {
             return null;
         }
         User user = userRepository.getUserById(id);
-        if (user.getRole() == Role.ADMIN) {
+        if (user != null && user.getRole() == Role.ADMIN) {
             return null;
         }
         return userRepository.giveUserAdminRole(id);
