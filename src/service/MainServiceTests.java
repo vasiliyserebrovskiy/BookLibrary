@@ -166,6 +166,28 @@ public class MainServiceTests {
     // Тестируем метод deleteUser - Тим
 
     // Тестируем метод giveUserAdminRole - Игорь
+    @ParameterizedTest
+    @ValueSource(ints = {2, 3, 4})
+    void testGiveUserAdminRole(int userId) {
+        service.login("1", "1");
+
+        User user = service.giveUserAdminRole(userId);
+
+        assertNotNull(user);
+        assertEquals(Role.ADMIN, user.getRole());
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {7, 99, -4})
+    void testNotGiveUserAdminRole(int userId) {
+        service.login("1", "1");
+
+        User user = service.giveUserAdminRole(userId);
+
+        assertNull(user);
+    }
+
+
 
     //Проверка метода login() -------------------------------------------------------
     @ParameterizedTest
@@ -302,11 +324,101 @@ public class MainServiceTests {
         );
     }
 
-    // Тестируем метод unblockUser by id Игорь
+    // Тестируем метод unblockUser by id
+    @ParameterizedTest
+    @MethodSource("testValidUnblockUserById")
+    void testValidUnblockUserById(int userId) {
+        service.login("1" , "1");
 
-    // Тестируем метод blockUser by email - Игорь
+        service.blockUser(userId);
 
-    // Тестируем метод blockUser by id - Игорь
+        User user = service.unblockUser(userId);
+        assertNotNull(user);
+        assertEquals(Role.USER, user.getRole());
+    }
+    static Stream<Arguments> testValidUnblockUserById() {
+        return Stream.of(
+                Arguments.of(2),
+                Arguments.of(3),
+                Arguments.of(4)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("testNotValidUnblockUserById")
+    void testNotValidUnblockUserById(int userId) {
+        service.login("1" , "1");
+
+        User user = service.unblockUser(userId);
+        assertNull(user);
+    }
+    static Stream<Arguments> testNotValidUnblockUserById() {
+        return Stream.of(
+                Arguments.of(99),
+                Arguments.of(-1),
+                Arguments.of(0)
+        );
+    }
+
+
+    // Тестируем метод blockUser by email
+    @ParameterizedTest
+    @MethodSource("testValidBlockUserByEmail")
+    void testValidBlockUserByEmail(String email) {
+        service.login("1", "1");
+
+        User user = service.blockUser(email);
+
+        assertNotNull(user);
+        assertEquals(Role.BLOCKED, user.getRole());
+    }
+
+    static Stream<Arguments> testValidBlockUserByEmail() {
+        return Stream.of(
+                Arguments.of("user2@example.com"),
+                Arguments.of("user3@example.com"),
+                Arguments.of("user4@example.com")
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("testNotValidBlockUserByEmail")
+    void testNotValidBlockUserByEmail(String email) {
+        service.login("1", "1");
+
+        User user = service.blockUser(email);
+
+        assertNull(user);
+    }
+
+    static Stream<Arguments> testNotValidBlockUserByEmail() {
+        return Stream.of(
+                Arguments.of("nonexistent@example.com"),
+                Arguments.of("invalid@@example.com"),
+                Arguments.of("")
+        );
+    }
+
+    // Тестируем метод blockUser by id
+    @ParameterizedTest
+    @ValueSource(ints = {2,3,4})
+    void testValidBlockUserById(int userId) {
+        service.login("1", "1");
+        User user = service.blockUser(userId);
+        assertNotNull(user);
+        assertEquals(Role.BLOCKED, user.getRole());
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {0,-7,20})
+    void testNotValidBlockUserById(int userId) {
+        service.login("1", "1");
+        User user = service.blockUser(userId);
+        assertNull(user);
+    }
+
+
+
 
     // ----------------------------------------------------------------------------------------------
     // ТЕСТЫ МЕТОДОВ ПО КНИГАМ
