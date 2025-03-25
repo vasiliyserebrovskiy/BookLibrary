@@ -16,6 +16,7 @@ import repository.UserRepository;
 import repository.UserRepositoryImpl;
 import utils.MyList;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -113,6 +114,37 @@ public class MainServiceTests {
     }
 
     // Тестируем метод getUserById пока не используем - Виталий
+
+    @ParameterizedTest
+    @MethodSource("testValidGetUserById")
+    void testValidGetUserById(int id){
+        User user = service.getUserById(id);
+        assertNotNull(user);
+    }
+
+    static Stream<Arguments> testValidGetUserById(){
+        return Stream.of(
+                Arguments.of(1),
+                Arguments.of(2),
+                Arguments.of(3)
+
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("testNotValidGetUserById")
+    void testNotValidGetUserById(int id) {
+        User user = service.getUserById(id);
+        assertNull(user);
+    }
+
+    static Stream<Arguments> testNotValidGetUserById() {
+        return Stream.of(
+                Arguments.of(100),
+                Arguments.of(200),
+                Arguments.of(300)
+        );
+    }
 
     //Тестируем метод getAllUsers
     @Test
