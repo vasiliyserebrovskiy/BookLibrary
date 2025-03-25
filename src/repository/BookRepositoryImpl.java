@@ -160,9 +160,10 @@ public class BookRepositoryImpl implements BookRepository {
     }
 
     @Override
-    public boolean deleteBookById(int id) {
+    public Book deleteBookById(int id) {
         Book book = getBookById(id);
-        return books.remove(book);
+        int bookIndex = books.indexOf(book);
+        return books.remove(bookIndex);
     }
 
     @Override
@@ -191,5 +192,11 @@ public class BookRepositoryImpl implements BookRepository {
         Book book = getBookById(id);
         book.setBookGenre(bookGenre);
         return book;
+    }
+
+    @Override
+    public User getReadingUser(int id) {
+        Book book = getBookById(id);
+        return book.getReadingUser();
     }
 }

@@ -17,11 +17,13 @@ public interface BookRepository {
     Book userGetBook(int id, User user);
     Book userReturnBook(int id);
     boolean isBookExist(int id);
-    boolean deleteBookById(int id);
+    Book deleteBookById(int id);
 
     Book updateTitle(int id, String title);
     Book updateAuthor(int id, String author);
     Book updateDateYear(int id, String dateYear);
     Book updateGenre(int id, String bookGenre);
+
+    User getReadingUser(int id);
 
 }
