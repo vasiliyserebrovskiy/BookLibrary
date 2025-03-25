@@ -2,6 +2,7 @@
 package service;
 
 import model.Book;
+import model.Role;
 import model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -83,7 +84,7 @@ public class MainServiceTests {
     // Тестируем метод getUserByEmail
     @ParameterizedTest
     @MethodSource("testGetUserByEmail")
-    void testValidGetUserByEmail(String email){
+    void testValidGetUserByEmail(String email) {
         User user = service.getUserByEmail(email);
         assertNotNull(user);
     }
@@ -98,7 +99,7 @@ public class MainServiceTests {
 
     @ParameterizedTest
     @MethodSource("testNotValidGetUserByEmail")
-    void testNotValidGetUserByEmail(String email){
+    void testNotValidGetUserByEmail(String email) {
         User user = service.getUserByEmail(email);
         assertNull(user);
     }
@@ -111,7 +112,7 @@ public class MainServiceTests {
         );
     }
 
-    // Тестируем метод getUserById пока не используем
+    // Тестируем метод getUserById пока не используем - Виталий
 
     //Тестируем метод getAllUsers
     @Test
@@ -162,9 +163,9 @@ public class MainServiceTests {
         );
     }
 
-    // Тестируем метод deleteUser
+    // Тестируем метод deleteUser - Тим
 
-    // Тестируем метод giveUserAdminRole
+    // Тестируем метод giveUserAdminRole - Игорь
 
     //Проверка метода login() -------------------------------------------------------
     @ParameterizedTest
@@ -270,15 +271,13 @@ public class MainServiceTests {
     @ParameterizedTest
     @MethodSource("testValidUnblockUser")
     void testValidUnblockUser(String email) {
-        service.login("1","1");
-        System.out.println(service.getActiveUser());
-
-        User user = service.getUserByEmail(email);
-        System.out.println(user);
-        User test = service.blockUser(email);
-        System.out.println("test blockuser = " +test);
+        service.login("1", "1");
+        User user = service.blockUser(email);
+        assertNotNull(user);
+        assertEquals(Role.BLOCKED, user.getRole());
 
     }
+
     static Stream<Arguments> testValidUnblockUser() {
         return Stream.of(
                 Arguments.of("user2@example.com"),
@@ -287,11 +286,27 @@ public class MainServiceTests {
         );
     }
 
-    // Тестируем метод unblockUser by id
+    @ParameterizedTest
+    @MethodSource("testNotValidUnblockUser")
+    void testNotValidUnblockUser(String email) {
+        service.login("1", "1");
+        User user = service.blockUser(email);
+        assertNull(user);
+    }
 
-    // Тестируем метод blockUser by email
+    static Stream<Arguments> testNotValidUnblockUser() {
+        return Stream.of(
+                Arguments.of("user22@example.com"),
+                Arguments.of("user33@example.com."),
+                Arguments.of("user4@@example.com")
+        );
+    }
 
-    // Тестируем метод blockUser by id
+    // Тестируем метод unblockUser by id Игорь
+
+    // Тестируем метод blockUser by email - Игорь
+
+    // Тестируем метод blockUser by id - Игорь
 
     // ----------------------------------------------------------------------------------------------
     // ТЕСТЫ МЕТОДОВ ПО КНИГАМ
@@ -353,6 +368,7 @@ public class MainServiceTests {
 
         assertEquals(0, borrowedBook.size());
     }
+
     @Test
     void testGetMyBook2() {
         boolean login = service.login("user2@example.com", "Secure*987");
@@ -377,9 +393,9 @@ public class MainServiceTests {
 
     static Stream<Arguments> testValidCreateBook() {
         return java.util.stream.Stream.of(
-                Arguments.of("Test1","Test Author","1950","Horror"),
-                Arguments.of("Test2","Test Author","2000","Komedy"),
-                Arguments.of("Test3","Test Author","2020","Роман")
+                Arguments.of("Test1", "Test Author", "1950", "Horror"),
+                Arguments.of("Test2", "Test Author", "2000", "Komedy"),
+                Arguments.of("Test3", "Test Author", "2020", "Роман")
         );
     }
 
@@ -395,23 +411,24 @@ public class MainServiceTests {
 
     static Stream<Arguments> testNotValidCreateBook() {
         return java.util.stream.Stream.of(
-                Arguments.of("","Test Author","1950","Horror"),
-                Arguments.of("Test2","","2000","Komedy"),
-                Arguments.of("Test3","Test Author","","Роман"),
-                Arguments.of("","","",""),
-                Arguments.of("Test3","Test Author","2020","")
+                Arguments.of("", "Test Author", "1950", "Horror"),
+                Arguments.of("Test2", "", "2000", "Komedy"),
+                Arguments.of("Test3", "Test Author", "", "Роман"),
+                Arguments.of("", "", "", ""),
+                Arguments.of("Test3", "Test Author", "2020", "")
         );
     }
 
     // Тестируем метод getBookById
     @ParameterizedTest
-    @ValueSource(ints = {1,4,9})
+    @ValueSource(ints = {1, 4, 9})
     void testValidGetBookById(int id) {
         Book book = service.getBookById(id);
         assertNotNull(book);
     }
+
     @ParameterizedTest
-    @ValueSource(ints = {15,42,96})
+    @ValueSource(ints = {15, 42, 96})
     void testNotValidGetBookById(int id) {
         Book book = service.getBookById(id);
         assertNull(book);
@@ -438,13 +455,13 @@ public class MainServiceTests {
         // User expectedUser = service.getUserByEmail(email);
         Book book = service.updateTitle(id, title);
         assertNotNull(book);
-        assertEquals(title,book.getTitle());
+        assertEquals(title, book.getTitle());
     }
 
     static Stream<Arguments> testValidUpdateTitle() {
         return java.util.stream.Stream.of(
-                Arguments.of("1","Test Title"),
-                Arguments.of("1","Test Title 2")
+                Arguments.of("1", "Test Title"),
+                Arguments.of("1", "Test Title 2")
         );
     }
 
@@ -460,10 +477,10 @@ public class MainServiceTests {
 
     static Stream<Arguments> testNotValidUpdateTitle() {
         return java.util.stream.Stream.of(
-                Arguments.of("1",""),
-                Arguments.of("7","  "),
-                Arguments.of("25","       "),
-                Arguments.of("56","Test Title 2")
+                Arguments.of("1", ""),
+                Arguments.of("7", "  "),
+                Arguments.of("25", "       "),
+                Arguments.of("56", "Test Title 2")
         );
     }
 
@@ -476,13 +493,13 @@ public class MainServiceTests {
         // User expectedUser = service.getUserByEmail(email);
         Book book = service.updateAuthor(id, author);
         assertNotNull(book);
-        assertEquals(author,book.getAuthor());
+        assertEquals(author, book.getAuthor());
     }
 
     static Stream<Arguments> testValidUpdateAuthor() {
         return java.util.stream.Stream.of(
-                Arguments.of("1","Test Author"),
-                Arguments.of("1","Test Author 2")
+                Arguments.of("1", "Test Author"),
+                Arguments.of("1", "Test Author 2")
         );
     }
 
@@ -498,11 +515,11 @@ public class MainServiceTests {
 
     static Stream<Arguments> testNotValidUpdateAuthor() {
         return java.util.stream.Stream.of(
-                Arguments.of("1",""),
-                Arguments.of("0","New Author"),
-                Arguments.of("7","  "),
-                Arguments.of("25","       "),
-                Arguments.of("56","Test Title 2")
+                Arguments.of("1", ""),
+                Arguments.of("0", "New Author"),
+                Arguments.of("7", "  "),
+                Arguments.of("25", "       "),
+                Arguments.of("56", "Test Title 2")
         );
     }
 
@@ -516,13 +533,13 @@ public class MainServiceTests {
         // User expectedUser = service.getUserByEmail(email);
         Book book = service.updateDateYear(id, dateYear);
         assertNotNull(book);
-        assertEquals(dateYear,book.getDateYear());
+        assertEquals(dateYear, book.getDateYear());
     }
 
     static Stream<Arguments> testValidUpdateDateYear() {
         return java.util.stream.Stream.of(
-                Arguments.of("1","1900"),
-                Arguments.of("1","1923")
+                Arguments.of("1", "1900"),
+                Arguments.of("1", "1923")
         );
     }
 
@@ -538,11 +555,11 @@ public class MainServiceTests {
 
     static Stream<Arguments> testNotValidUpdateDateYear() {
         return java.util.stream.Stream.of(
-                Arguments.of("1",""),
-                Arguments.of("0","1982"),
-                Arguments.of("7","  "),
-                Arguments.of("25","       "),
-                Arguments.of("56","Test Title 2")
+                Arguments.of("1", ""),
+                Arguments.of("0", "1982"),
+                Arguments.of("7", "  "),
+                Arguments.of("25", "       "),
+                Arguments.of("56", "Test Title 2")
         );
     }
 
@@ -555,13 +572,13 @@ public class MainServiceTests {
         // User expectedUser = service.getUserByEmail(email);
         Book book = service.updateGenre(id, bookGenre);
         assertNotNull(book);
-        assertEquals(bookGenre,book.getBookGenre());
+        assertEquals(bookGenre, book.getBookGenre());
     }
 
     static Stream<Arguments> testValidUpdateGenre() {
         return java.util.stream.Stream.of(
-                Arguments.of("1","Комедия"),
-                Arguments.of("3","История")
+                Arguments.of("1", "Комедия"),
+                Arguments.of("3", "История")
         );
     }
 
@@ -577,11 +594,11 @@ public class MainServiceTests {
 
     static Stream<Arguments> testNotValidUpdateGenre() {
         return java.util.stream.Stream.of(
-                Arguments.of("1",""),
-                Arguments.of("0","New Author"),
-                Arguments.of("7","  "),
-                Arguments.of("25","       "),
-                Arguments.of("56","Ужасы")
+                Arguments.of("1", ""),
+                Arguments.of("0", "New Author"),
+                Arguments.of("7", "  "),
+                Arguments.of("25", "       "),
+                Arguments.of("56", "Ужасы")
         );
     }
 

@@ -12,7 +12,7 @@ public class BooksLibraryApplication {
         BookRepository bookRepository = new BookRepositoryImpl();
         UserRepository userRepository = new UserRepositoryImpl();
 
-        MainService service = new MainServiceImpl(bookRepository,userRepository);
+        MainService service = new MainServiceImpl(bookRepository, userRepository);
 
         Menu menu = new Menu(service);
 

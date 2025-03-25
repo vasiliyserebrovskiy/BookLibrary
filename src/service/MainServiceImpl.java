@@ -196,11 +196,14 @@ public class MainServiceImpl implements MainService {
 
     @Override
     public Book createBook(String title, String author, String dateYear, String bookGenre) {
-        if (title.isEmpty() && author.isEmpty() && dateYear.isEmpty() && bookGenre.isEmpty()) {
-            return null;
-        } else {
+
+        if (!title.isEmpty() && !author.isEmpty() && !dateYear.isEmpty() && !bookGenre.isEmpty()
+                && !isSpaces(title) && !isSpaces(author) && !isSpaces(dateYear) && !isSpaces(bookGenre) && isInteger(dateYear)) {
+
             return bookRepository.addBook(title, author, dateYear, bookGenre);
         }
+
+        return null;
     }
 
     @Override
@@ -247,7 +250,7 @@ public class MainServiceImpl implements MainService {
         Book book;
         if (bookId > 0) {
             book = bookRepository.getBookById(bookId);
-            if (book != null && book.getReadingUser().equals(activeUser)) {
+            if (book != null && book.getReadingUser() == null && activeUser.getRole() != Role.BLOCKED) {
                 book = bookRepository.userGetBook(bookId, activeUser);
                 return book;
             }
@@ -346,17 +349,17 @@ public class MainServiceImpl implements MainService {
     }
 
     @Override
-    public Book whoReadBook(int id) {
+    public User whoReadBook(int id) {
         if (id > 0) {
             if (bookRepository.isBookExist(id)) {
-                    return bookRepository.getBookById(id);
+                return bookRepository.getReadingUser(id);
             }
         }
         return null;
     }
 
     private boolean isSpaces(String str) {
-        return str.matches("\\s+"); // Только положительные целые числа
+        return str.matches("\\s+"); // пробелы 1 и более
     }
 
     private boolean isInteger(String str) {
