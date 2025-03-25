@@ -21,10 +21,10 @@ public interface MainService {
     boolean logout(); //++
     User getActiveUser(); //++
 
-    boolean unblockUser(String email);
+    User unblockUser(String email);
     User unblockUser(int userId);
-    boolean blockUser(String email);
-    boolean blockUser(int userId);
+    User blockUser(String email);
+    User blockUser(int userId);
 
     // Методы по работе с книгами
     MyList<Book> getAllBooks(); //++
